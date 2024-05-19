@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 function Timer({ readOnlyTimeTable, timerVisible }: any) {
   const [remainingTime, setRemainingTime] = useState("00:00:00");
   const [text, setText] = useState("");
   const [targetTime, setTargetTime] = useState<Date | null>(null);
   const requestRef = useRef<number>();
+  const [percent, setPercent] = useState(100);
 
   useEffect(() => {
     let currentIdx;
@@ -41,6 +46,27 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
       setText(readOnlyTimeTable[Math.floor(currentIdx / 2)].session + " 교시");
     }
 
+    //=========================
+
+    console.log("확인", readOnlyTimeTable[Math.floor(currentIdx / 2)]);
+
+    const nowSession = readOnlyTimeTable[Math.floor(currentIdx / 2)];
+
+    const startT = Number(nowSession.startTime.replace(":", ""));
+
+    const endT = Number(nowSession.endTime.replace(":", ""));
+
+    console.log(
+      (Number(remainingTime.slice(0, 5).replace(":", "")) / (endT - startT)) *
+        100
+    );
+
+    setPercent(
+      (Number(remainingTime.slice(0, 5).replace(":", "")) / (endT - startT)) *
+        100
+    );
+    //==========================
+
     const nextTarget = timeArr[currentIdx];
     const targetHour = nextTarget.split(":")[0];
     const targetMinutes = nextTarget.split(":")[1];
@@ -62,7 +88,7 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
 
     requestRef.current = requestAnimationFrame(updateTime);
     return () => cancelAnimationFrame(requestRef.current!);
-  }, [targetTime]);
+  }, [targetTime, remainingTime]);
 
   function getRemainingTime(current: Date, target: Date) {
     const difference = target.getTime() - current.getTime();
@@ -77,13 +103,73 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
     return `${hours}:${minutes}:${seconds}`;
   }
 
+  console.log("퍼센트", percent, 100 - percent);
+
+  //=====================================
+
+  const options = {
+    cutoutPercentage: 10, // 도넛 굵기 값이 클수록 얇아짐. Chart.js 3+에서는 'cutout'을 사용.
+    maintainAspectRatio: false, // false : 상위 div에 구속
+    plugins: {
+      legend: {
+        position: "bottom",
+      },
+      title: {
+        display: false,
+      },
+      datalabels: {
+        display: true,
+        // color: "#fff",
+        weight: "bold",
+        textShadowBlur: 10,
+        textShadowColor: "black",
+      },
+      doughnutlabel: {
+        labels: [
+          {
+            text: "0",
+            font: {
+              size: 20,
+              weight: "bold",
+            },
+          },
+          {
+            text: "total",
+          },
+        ],
+      },
+    },
+  };
+
+  const data = {
+    labels: [],
+    datasets: [
+      {
+        label: "My First Dataset",
+        data: [percent, 100 - percent],
+        backgroundColor: ["#ee4f36", "#ffffff"],
+        hoverOffset: 4,
+        cutout: "90%", // 도넛 안쪽 원의 크기 설정
+      },
+    ],
+  };
+
   return (
     <Container>
       {timerVisible && (
-        <Wrapper>
-          <Text>{text}</Text>
-          <Count>{remainingTime}</Count>
-        </Wrapper>
+        <>
+          <Doughnut
+            data={data}
+            // @ts-ignore
+            options={options}
+            // @ts-ignore
+            plugins={data.plugins}
+          ></Doughnut>
+          <Wrapper>
+            <Text>{text}</Text>
+            <Count>{remainingTime}</Count>
+          </Wrapper>
+        </>
       )}
     </Container>
   );
@@ -97,6 +183,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 `;
 
 const Wrapper = styled.div`
@@ -104,6 +191,10 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -65%);
 `;
 
 const Text = styled.span`
@@ -115,6 +206,8 @@ const Count = styled.span`
   font-size: 2rem;
   font-weight: 700;
 `;
+
+//========================================================================
 
 // import React, { useState, useEffect, useRef } from "react";
 // import styled from "styled-components";
