@@ -1,14 +1,20 @@
 import React from "react";
 import styled from "styled-components";
+import { Button } from "./atom";
 
-const Table = ({ columnList, dataList }: any) => {
+const Table = ({
+  columnList,
+  dataList,
+  onAddRow,
+  onReset,
+  onInit,
+  onSave,
+}: any) => {
   /* 컬럼별 너비만 배열로 만들기 */
   const cellWidthArr = columnList.map((item: any) => item.width);
 
   /* 로우별 값만 배열로 만들기(이중 배열 구조)*/
   const doubleArrOfValue = dataList.map((item: any) => Object.values(item));
-
-  console.log("testtest", doubleArrOfValue);
 
   return (
     <TableContainer>
@@ -19,6 +25,9 @@ const Table = ({ columnList, dataList }: any) => {
           </Cell>
         ))}
       </TableHeader>
+      {doubleArrOfValue.length === 0 && (
+        <TableRow style={{ margin: "0 auto" }}>데이터가 없습니다.</TableRow>
+      )}
       {doubleArrOfValue.map((data: any, index: number) => (
         <TableRow key={index}>
           {data.map((item: any, index: number) => (
@@ -28,11 +37,11 @@ const Table = ({ columnList, dataList }: any) => {
           ))}
         </TableRow>
       ))}
-      <AddDataBtn>+</AddDataBtn>
+      <AddDataBtn onClick={onAddRow}>+</AddDataBtn>
       <ButtonContainer>
-        <button>모두 지우기</button>
-        <button>초기화</button>
-        <button>저장</button>
+        <Button onClick={onReset}>모두 지우기</Button>
+        <Button onClick={onInit}>초기화</Button>
+        <Button onClick={onSave}>저장</Button>
       </ButtonContainer>
     </TableContainer>
   );
@@ -41,7 +50,7 @@ const Table = ({ columnList, dataList }: any) => {
 export default Table;
 
 const TableContainer = styled.div`
-  /* background-color: pink; */
+  /* background-color: #598497; */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -52,7 +61,8 @@ const TableContainer = styled.div`
 
 const TableHeader = styled.div`
   height: 2rem;
-  background-color: aliceblue;
+  background-color: #d5e2e8;
+  border-radius: 0.4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -64,6 +74,7 @@ const TableRow = styled.div`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eaeaea;
+  padding: 0.2rem;
   /* background-color: yellow; */
 `;
 
@@ -80,6 +91,6 @@ const ButtonContainer = styled.div`
   gap: 0.5rem;
 `;
 
-const AddDataBtn = styled.button`
+const AddDataBtn = styled(Button)`
   width: 100%;
 `;
