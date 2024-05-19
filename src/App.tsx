@@ -1,4 +1,10 @@
-import React, { ChangeEvent, TouchEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  TouchEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import "./App.css";
 import styled, { css } from "styled-components";
 import Table from "./components/Table";
@@ -30,6 +36,8 @@ import Swal from "sweetalert2";
 import { color } from "./components/theme";
 import { calculateTimeDifferenceInMinutes, isNow } from "./util/calcTimeDiff";
 import Timer from "./components/Timer";
+import TimeTableComponent from "./components/TimeTableComponent";
+import DDday from "./components/DDday";
 
 function App() {
   const tempColor = "#E7E0D8";
@@ -39,7 +47,6 @@ function App() {
   const [dDayList, setDDayList] = useState<any>([]);
   const [settingData, setSettingData] = useState<any>([]);
   const [status, setStatus] = useState(getLocalStatus() || "");
-  const [currentTime, setCurrentTime] = useState("06:00:00");
 
   const [readOnlyTimeTable, setReadOnlyTimeTable] = useState([]);
   const [readOnlyDDay, setReadOnlyDDay] = useState([]);
@@ -360,16 +367,16 @@ function App() {
   const initialSizeState = {
     // 추후 로컬 스토리지데이터로 교체
     sideBar: { width: 200 },
-    dateAndStatus: { width: 180, height: 80, gap: 1 },
-    timeTable: { width: 180, height: 500, gap: 1 },
-    currentTime: { width: 180, height: 50, gap: 1 },
-    video: { width: 180, height: 120, gap: 1 },
-    dDay: { width: 180, height: 120, gap: 1 },
+    dateAndStatus: { width: 180, height: 110, gap: 1 },
+    timeTable: { width: 180, height: 300, gap: 1 },
+    currentTime: { width: 180, height: 70, gap: 1 },
+    video: { width: 180, height: 80, gap: 1 },
+    dDay: { width: 180, height: 140, gap: 3 },
   };
 
   const [displaySize, setDisplaySize] = useState(initialSizeState);
 
-  const todayDate = moment().format("YYYY-MM-DD");
+  const todayDate = moment().format("MMM D ddd");
 
   const handleLazeChange = (e: TouchEvent<HTMLInputElement>) => {
     console.log("뭐노", e);
@@ -434,8 +441,8 @@ function App() {
   };
 
   const getReadOnlyDDayDataList = () => {
-    const timeTableRes = getLocalTimeTableDataList();
-    setReadOnlyTimeTable(timeTableRes);
+    const dDayRes = getLocalDDayDataList();
+    setReadOnlyDDay(dDayRes);
   };
 
   useEffect(() => {
@@ -443,17 +450,22 @@ function App() {
     getReadOnlyDDayDataList();
   }, []);
 
-  const renderer = ({ hours, minutes, seconds, completed }: any) => {
-    if (completed) {
-      return;
-    } else {
-      return (
-        <span>
-          {zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
-        </span>
-      );
-    }
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const requestRef = useRef<number>();
+
+  const updateTime = () => {
+    setCurrentTime(new Date());
   };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      updateTime();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const [timerVisible, setTimerVisible] = useState(true);
 
   return (
     <Main>
@@ -468,11 +480,16 @@ function App() {
             gap={displaySize?.dateAndStatus?.gap}
             areavisible={areavisible}
           >
-            <p>[Current status]</p>
-            <p>{todayDate}</p>
-            <p>{status}</p>
+            <DisplayTitle>[Current status]</DisplayTitle>
+            <DateText>{todayDate}</DateText>
+            <StatusText>{status}</StatusText>
           </DateAndStatusWrapper>
-          <TimeTableWrapper
+          <TimeTableComponent
+            displaySize={displaySize}
+            areavisible={areavisible}
+            readOnlyTimeTable={readOnlyTimeTable}
+          />
+          {/* <TimeTableWrapper
             width={displaySize?.timeTable?.width}
             height={displaySize?.timeTable?.height}
             gap={displaySize?.timeTable?.gap}
@@ -489,21 +506,17 @@ function App() {
                 ')
               </TimeTableRow>
             ))}
-          </TimeTableWrapper>
+          </TimeTableWrapper> */}
           <CurrentTimeWrapper
             width={displaySize?.currentTime?.width}
             height={displaySize?.currentTime?.height}
             gap={displaySize?.currentTime?.gap}
             areavisible={areavisible}
           >
-            <p>[Current time]</p>
-            <Clock
-              format={"HH:mm:ss"}
-              ticking={true}
-              timezone={"Asia/Seoul"}
-              // onChange={(date) => setCurrentTime(formatTimestampToTime(date))}
-            />
-            {currentTime}
+            <DisplayTitle>[Current time]</DisplayTitle>
+            <TimeText>
+              {currentTime.toLocaleTimeString("en-GB", { hour12: false })}
+            </TimeText>
           </CurrentTimeWrapper>
           <VideoWrapper
             width={displaySize?.video?.width}
@@ -518,7 +531,8 @@ function App() {
             gap={displaySize?.dDay?.gap}
             areavisible={areavisible}
           >
-            <p>[Day]</p>
+            <DisplayTitle>[D-day]</DisplayTitle>
+            <DDday readOnlyDDay={readOnlyDDay} />
           </DDayWrapper>
         </DisplaySection>
         <ControllerSection>
@@ -542,27 +556,33 @@ function App() {
             <AreaContainer className="outline">
               <AreaTitle>수업 시간 타이머</AreaTitle>
               <AreaContent className="row">
-                {/* <Timer
-                  currentTime={currentTime}
+                <Timer
                   readOnlyTimeTable={readOnlyTimeTable}
-                /> */}
-                <Countdown date={Date.now() + 5000} renderer={renderer} />
+                  timerVisible={timerVisible}
+                />
+
+                {/* <Countdown date={Date.now() + 5000} renderer={renderer} /> */}
                 <ToggleList>
-                  <label htmlFor="autoStartSessionTimer">
-                    {/* <Toggle
+                  {/* <label htmlFor="autoStartSessionTimer">
+                    <Toggle
                       state={todoInfo?.isActiveRangeToggle}
                       setState={setIsActiveRangeToggle}
-                    /> */}
+                    />
                     <span>자동 실행 ON/OFF</span>
                     <input type="checkBox" id="autoStartSessionTimer" />
-                  </label>
+                  </label> */}
                   <label htmlFor="autoStartSessionTimer">
                     {/* <Toggle
                       state={todoInfo?.isActiveRangeToggle}
                       setState={setIsActiveRangeToggle}
                     /> */}
                     <span>보이기/숨기기</span>
-                    <input type="checkBox" id="autoStartSessionTimer" />
+                    <input
+                      type="checkBox"
+                      checked={timerVisible}
+                      onChange={(e) => setTimerVisible(e.target.checked)}
+                      id="autoStartSessionTimer"
+                    />
                   </label>
                   {/* <ManualStartForm>
                     <p>수동 실행</p>
@@ -872,7 +892,7 @@ const DisplaySection = styled.section<{ width: number; primarycolor: string }>`
   height: calc(100% - 20px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   gap: 0.5rem; // 추후 동적으로 설정
   margin: 10px 0;
@@ -1051,22 +1071,22 @@ const DateAndStatusWrapper = styled.div<{
   align-items: center;
   border-radius: 0.5rem;
 `;
-const TimeTableWrapper = styled.div<{
-  width?: number;
-  height?: number;
-  gap?: number;
-  areavisible: boolean;
-}>`
-  background-color: #${(props) => (props.areavisible ? "507788" : "")};
-  width: ${(props) => props.width}px;
-  height: ${(props) => props.height}px;
-  display: flex;
-  flex-direction: column;
-  gap: ${(props) => props.gap}px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 0.5rem;
-`;
+// const TimeTableWrapper = styled.div<{
+//   width?: number;
+//   height?: number;
+//   gap?: number;
+//   areavisible: boolean;
+// }>`
+//   background-color: #${(props) => (props.areavisible ? "507788" : "")};
+//   width: ${(props) => props.width}px;
+//   height: ${(props) => props.height}px;
+//   display: flex;
+//   flex-direction: column;
+//   gap: ${(props) => props.gap}px;
+//   justify-content: center;
+//   align-items: center;
+//   border-radius: 0.5rem;
+// `;
 const CurrentTimeWrapper = styled.div<{
   width?: number;
   height?: number;
@@ -1137,25 +1157,45 @@ const StyledInput = styled(Input)`
   text-align: center;
 `;
 
-const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
-  font-size: 0.8rem;
-  padding: 0 0.5rem;
-  border-radius: 1rem;
-  font-weight: 700;
-  ${(props) =>
-    props.now &&
-    css`
-      background-color: #ff31312e;
-    `}
+// const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
+//   font-size: 0.8rem;
+//   padding: 0 0.5rem;
+//   border-radius: 1rem;
+//   font-weight: 700;
+//   ${(props) =>
+//     props.now &&
+//     css`
+//       background-color: #ff31312e;
+//     `}
 
-  ${(props) =>
-    props.meal &&
-    css`
-      color: #ee4f36;
-    `}
+// ${(props) =>
+//   props.meal &&
+//   css`
+//     color: #ee4f36;
+//   `}
+// `;
+
+const DisplayTitle = styled.p`
+  margin: 0;
+  font-weight: 900;
+  font-size: 0.8rem;
 `;
 
-const displayTitle = styled.p`
+const DateText = styled.p`
   margin: 0;
+  font-size: 1.1rem;
   font-weight: 700;
+`;
+
+const StatusText = styled.p`
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #ee4f36;
+`;
+
+const TimeText = styled.p`
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 900;
 `;

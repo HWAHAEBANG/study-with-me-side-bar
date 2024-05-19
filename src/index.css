@@ -66,3 +66,27 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%; /* 슬라이더를 동그랗게 만듭니다. */
   border: 2px solid #fff; /* 슬라이더 주위에 테두리를 설정합니다. */
 }
+
+/* Global CSS */
+fieldset {
+  display: flex;
+  justify-content: center;
+  border: none;
+  margin: 0;
+  padding: 40px 20px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* slick fade 옵션 적용시, 마지막 요소를 제외하고 클릭되지 않는 버그 수정 */
+/* reference: https://lightrun.com/answers/akiran-react-slick-when-using-fade-slides-are-still-stacked-meaning-links-etc-on-lower-slides-are-inaccessible */
+.slick-slide {
+  pointer-events: none;
+} /* 모든 포인터 이벤트를 비활성화 */
+.slick-active {
+  pointer-events: auto;
+} /* active된 슬라이드만 다시 활성화*/

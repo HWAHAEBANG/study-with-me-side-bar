@@ -7,8 +7,6 @@ export const getLocalTimeTableDataList = () => {
 
 // 시간표 데이터 저장
 export const saveLocalTimeTableDataList = (array: any) => {
-  console.log("실행됨");
-
   localStorage.setItem("timeTable", JSON.stringify(array));
 };
 
@@ -16,7 +14,7 @@ export const saveLocalTimeTableDataList = (array: any) => {
 export const getLocalDDayDataList = () => {
   const respone = localStorage.getItem("dDay");
   if (respone === null) return respone;
-  return JSON.parse(respone ?? "");
+  return JSON.parse(respone);
 };
 
 // 디데이 데이터 저장

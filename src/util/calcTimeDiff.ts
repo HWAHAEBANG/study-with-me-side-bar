@@ -15,10 +15,12 @@ export function calculateTimeDifferenceInMinutes(
 
 export function isNow(startTime: string, endTime: string, currnetTime: string) {
   const current = Number(currnetTime.slice(0, 5).replace(":", ""));
-  const end = Number(endTime.replace(":", "")) - 60; // 땡 하면 바로 쉬니까 1분 뺴야함.
+  const end = Number(endTime.replace(":", "")) - 1; // 땡 하면 바로 쉬니까 1분 뺴야함.
   const start = Number(startTime.replace(":", ""));
 
-  if (current >= start && current <= end) {
+  //   console.log(start, current, end);
+
+  if (current >= start && current < end) {
     return true;
   } else {
     return false;
