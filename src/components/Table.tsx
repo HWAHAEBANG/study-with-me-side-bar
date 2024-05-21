@@ -12,9 +12,12 @@ const Table = ({
 }: any) => {
   /* 컬럼별 너비만 배열로 만들기 */
   const cellWidthArr = columnList.map((item: any) => item.width);
+  const accessorArr = columnList.map((item: any) => item.accessor);
 
   /* 로우별 값만 배열로 만들기(이중 배열 구조)*/
-  const doubleArrOfValue = dataList.map((item: any) => Object.values(item));
+  const doubleArrOfValue = dataList.map(
+    (item: any) => accessorArr.map((accesor: any) => item[accesor]) // 중요!! 신박한 접근법
+  );
 
   return (
     <TableContainer>

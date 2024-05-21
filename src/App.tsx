@@ -6,9 +6,8 @@ import React, {
   useState,
 } from "react";
 import "./App.css";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Table from "./components/Table";
-import Clock from "react-live-clock";
 import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -23,21 +22,21 @@ import {
 import Toggle from "./components/common/Toggle";
 import Countdown from "react-countdown";
 import {
-  getLocalDDayDataList,
   getLocalSettingData,
   getLocalStatus,
-  getLocalTimeTableDataList,
-  saveLocalDDayDataList,
   saveLocalStatus,
-  saveLocalTimeTableDataList,
   updateLocalSettingData,
 } from "./util/local";
 import Swal from "sweetalert2";
-import { color } from "./components/theme";
-import { calculateTimeDifferenceInMinutes, isNow } from "./util/calcTimeDiff";
 import Timer from "./components/Timer";
 import TimeTableComponent from "./components/TimeTableComponent";
 import DDday from "./components/DDday";
+import {
+  getLocalDDayDataList,
+  getLocalTimeTableDataList,
+  saveLocalDDayDataList,
+  saveLocalTimeTableDataList,
+} from "./api/firebase";
 
 function App() {
   const tempColor = "#E7E0D8";
@@ -413,35 +412,42 @@ function App() {
   ///===================
 
   useEffect(() => {
-    const timeTableRes = getLocalTimeTableDataList();
-    if (!timeTableRes) {
-      saveLocalTimeTableDataList([]);
-    } else {
-      setTimetableList(timeTableRes);
-    }
+    const getData = async () => {
+      const timeTableRes = await getLocalTimeTableDataList();
+      if (!timeTableRes) {
+        saveLocalTimeTableDataList([]);
+      } else {
+        setTimetableList(timeTableRes);
+      }
 
-    const dDayTableRes = getLocalDDayDataList();
-    if (!dDayTableRes) {
-      saveLocalDDayDataList([]);
-    } else {
-      setDDayList(dDayTableRes);
-    }
-    const getSettingRes = getLocalSettingData();
-    if (!getSettingRes) {
-      updateLocalSettingData({});
-    } else {
-      setSettingData(getSettingRes);
-    }
+      const dDayTableRes = await getLocalDDayDataList();
+      if (!dDayTableRes) {
+        saveLocalDDayDataList([]);
+      } else {
+        setDDayList(dDayTableRes);
+      }
+      const getSettingRes = await getLocalSettingData();
+      if (!getSettingRes) {
+        updateLocalSettingData({});
+      } else {
+        setSettingData(getSettingRes);
+      }
+    };
+    getData();
   }, []);
 
   // 읽기 전용 데이타 페칭
-  const getReadOnlyTimeTableDataList = () => {
-    const timeTableRes = getLocalTimeTableDataList();
-    setReadOnlyTimeTable(timeTableRes);
+  const getReadOnlyTimeTableDataList = async () => {
+    try {
+      const timeTableRes = await getLocalTimeTableDataList();
+      setReadOnlyTimeTable(timeTableRes);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const getReadOnlyDDayDataList = () => {
-    const dDayRes = getLocalDDayDataList();
+  const getReadOnlyDDayDataList = async () => {
+    const dDayRes = await getLocalDDayDataList();
     setReadOnlyDDay(dDayRes);
   };
 

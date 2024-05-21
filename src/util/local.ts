@@ -6,9 +6,9 @@ export const getLocalTimeTableDataList = () => {
 };
 
 // 시간표 데이터 저장
-export const saveLocalTimeTableDataList = (array: any) => {
-  localStorage.setItem("timeTable", JSON.stringify(array));
-};
+// export const saveLocalTimeTableDataList = (array: any) => {
+//   localStorage.setItem("timeTable", JSON.stringify(array));
+// };
 
 // 디데이 데이터 조회
 export const getLocalDDayDataList = () => {

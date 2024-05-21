@@ -103,7 +103,7 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
     return `${hours}:${minutes}:${seconds}`;
   }
 
-  console.log("퍼센트", percent, 100 - percent);
+  // console.log("퍼센트", percent, 100 - percent);
 
   //=====================================
 
