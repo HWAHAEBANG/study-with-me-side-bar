@@ -15,8 +15,8 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // 시간표 데이터 조회
-export const getLocalTimeTableDataList = () => {
-  return get(ref(database, "timeTable"))
+export const getFirebaseTimeTableDataList = (timeZone: boolean) => {
+  return get(ref(database, `timeTable/${timeZone ? "dayTime" : "nightTime"}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
         return snapshot.val();
@@ -31,12 +31,15 @@ export const getLocalTimeTableDataList = () => {
 };
 
 // 시간표 데이터 저장
-export const saveLocalTimeTableDataList = (array: any) => {
-  set(ref(database, `timeTable`), array);
+export const saveFirebaseTimeTableDataList = (
+  timeZone: boolean,
+  array: any
+) => {
+  set(ref(database, `timeTable/${timeZone ? "dayTime" : "nightTime"}`), array);
 };
 
 // 디데이 데이터 조회
-export const getLocalDDayDataList = () => {
+export const getFirebaseDDayDataList = () => {
   return get(ref(database, "dDay"))
     .then((snapshot) => {
       if (snapshot.exists()) {
@@ -52,12 +55,12 @@ export const getLocalDDayDataList = () => {
 };
 
 // 디데이 데이터 저장
-export const saveLocalDDayDataList = (array: any) => {
+export const saveFirebaseDDayDataList = (array: any) => {
   set(ref(database, `dDay`), array);
 };
 
 // 세팅 데이터 조회
-export const getLocalSettingData = () => {
+export const getFirebaseSettingData = () => {
   return get(ref(database, "setting"))
     .then((snapshot) => {
       if (snapshot.exists()) {
@@ -73,12 +76,12 @@ export const getLocalSettingData = () => {
 };
 
 // 세팅 데이터 저장
-export const updateLocalSettingData = (array: any) => {
+export const saveFirebaseSettingData = (array: any) => {
   set(ref(database, `setting`), array);
 };
 
 // 상태 데이터 조회
-export const getLocalStatus = () => {
+export const getFirebaseStatusData = () => {
   return get(ref(database, "status"))
     .then((snapshot) => {
       if (snapshot.exists()) {
@@ -94,6 +97,6 @@ export const getLocalStatus = () => {
 };
 
 // 상태 데이터 저장
-export const saveLocalStatus = (data: string) => {
+export const saveFirebaseStatusData = (data: string) => {
   set(ref(database, `status`), data);
 };

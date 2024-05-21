@@ -12,6 +12,8 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
   const requestRef = useRef<number>();
   const [percent, setPercent] = useState(100);
 
+  // console.log("리렌더링");
+
   useEffect(() => {
     let currentIdx;
     let flag = true;
@@ -48,21 +50,15 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
 
     //=========================
 
-    console.log("확인", readOnlyTimeTable[Math.floor(currentIdx / 2)]);
-
     const nowSession = readOnlyTimeTable[Math.floor(currentIdx / 2)];
 
     const startT = Number(nowSession.startTime.replace(":", ""));
 
     const endT = Number(nowSession.endTime.replace(":", ""));
 
-    console.log(
-      (Number(remainingTime.slice(0, 5).replace(":", "")) / (endT - startT)) *
-        100
-    );
-
     setPercent(
-      (Number(remainingTime.slice(0, 5).replace(":", "")) / (endT - startT)) *
+      (Number(remainingTime.slice(0, 8).replaceAll(":", "")) /
+        (endT * 100 - startT * 100)) *
         100
     );
     //==========================
@@ -75,7 +71,7 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
     const target = new Date(now.getTime());
     target.setHours(Number(targetHour), Number(targetMinutes), 0, 0);
     setTargetTime(target);
-  }, [readOnlyTimeTable]);
+  }, [remainingTime, readOnlyTimeTable]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -102,8 +98,6 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
     const seconds = (totalSeconds % 60).toString().padStart(2, "0");
     return `${hours}:${minutes}:${seconds}`;
   }
-
-  // console.log("퍼센트", percent, 100 - percent);
 
   //=====================================
 

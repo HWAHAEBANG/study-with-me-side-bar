@@ -21,21 +21,19 @@ import {
 } from "./components/atom";
 import Toggle from "./components/common/Toggle";
 import Countdown from "react-countdown";
-import {
-  getLocalSettingData,
-  getLocalStatus,
-  saveLocalStatus,
-  updateLocalSettingData,
-} from "./util/local";
 import Swal from "sweetalert2";
 import Timer from "./components/Timer";
 import TimeTableComponent from "./components/TimeTableComponent";
 import DDday from "./components/DDday";
 import {
-  getLocalDDayDataList,
-  getLocalTimeTableDataList,
-  saveLocalDDayDataList,
-  saveLocalTimeTableDataList,
+  getFirebaseDDayDataList,
+  getFirebaseTimeTableDataList,
+  getFirebaseSettingData,
+  getFirebaseStatusData,
+  saveFirebaseDDayDataList,
+  saveFirebaseTimeTableDataList,
+  saveFirebaseSettingData,
+  saveFirebaseStatusData,
 } from "./api/firebase";
 
 function App() {
@@ -45,13 +43,11 @@ function App() {
   const [timetableList, setTimetableList] = useState<any>([]);
   const [dDayList, setDDayList] = useState<any>([]);
   const [settingData, setSettingData] = useState<any>([]);
-  const [status, setStatus] = useState(getLocalStatus() || "");
+  const [statusData, setStatusData] = useState("");
+  const [timeZone, setTimeZone] = useState<boolean>(false);
 
   const [readOnlyTimeTable, setReadOnlyTimeTable] = useState([]);
   const [readOnlyDDay, setReadOnlyDDay] = useState([]);
-
-  // console.log("타임테이블", timetableList);
-  // console.log("디데이", dDayList);
 
   const handleAddNewTimeTableRow = () => {
     setTimetableList((prev: any) => [
@@ -176,7 +172,7 @@ function App() {
 
   const handleSaveTimeTable = () => {
     if (emptyValueChecker(timetableList) && validTimeChecker(timetableList)) {
-      saveLocalTimeTableDataList(timetableList);
+      saveFirebaseTimeTableDataList(timeZone, timetableList);
       getReadOnlyTimeTableDataList();
       Swal.fire({
         text: "저장을 완료했어요.",
@@ -188,7 +184,7 @@ function App() {
 
   const handleSaveDDay = () => {
     if (emptyValueChecker(timetableList)) {
-      saveLocalDDayDataList(dDayList);
+      saveFirebaseDDayDataList(dDayList);
       getReadOnlyDDayDataList();
       Swal.fire({
         text: "저장을 완료했어요.",
@@ -413,33 +409,25 @@ function App() {
 
   useEffect(() => {
     const getData = async () => {
-      const timeTableRes = await getLocalTimeTableDataList();
-      if (!timeTableRes) {
-        saveLocalTimeTableDataList([]);
-      } else {
-        setTimetableList(timeTableRes);
-      }
+      const timeTableRes = await getFirebaseTimeTableDataList(timeZone);
+      setTimetableList(timeTableRes);
 
-      const dDayTableRes = await getLocalDDayDataList();
-      if (!dDayTableRes) {
-        saveLocalDDayDataList([]);
-      } else {
-        setDDayList(dDayTableRes);
-      }
-      const getSettingRes = await getLocalSettingData();
-      if (!getSettingRes) {
-        updateLocalSettingData({});
-      } else {
-        setSettingData(getSettingRes);
-      }
+      const dDayTableRes = await getFirebaseDDayDataList();
+      setDDayList(dDayTableRes);
+
+      const getSettingRes = await getFirebaseSettingData();
+      setSettingData(getSettingRes);
+
+      const getStatusRes = await getFirebaseStatusData();
+      setStatusData(getStatusRes);
     };
     getData();
-  }, []);
+  }, [timeZone]);
 
   // 읽기 전용 데이타 페칭
   const getReadOnlyTimeTableDataList = async () => {
     try {
-      const timeTableRes = await getLocalTimeTableDataList();
+      const timeTableRes = await getFirebaseTimeTableDataList(timeZone);
       setReadOnlyTimeTable(timeTableRes);
     } catch (error) {
       console.log(error);
@@ -447,14 +435,14 @@ function App() {
   };
 
   const getReadOnlyDDayDataList = async () => {
-    const dDayRes = await getLocalDDayDataList();
+    const dDayRes = await getFirebaseDDayDataList();
     setReadOnlyDDay(dDayRes);
   };
 
   useEffect(() => {
     getReadOnlyTimeTableDataList();
     getReadOnlyDDayDataList();
-  }, []);
+  }, [timeZone]);
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const requestRef = useRef<number>();
@@ -486,9 +474,9 @@ function App() {
             gap={displaySize?.dateAndStatus?.gap}
             areavisible={areavisible}
           >
-            <DisplayTitle>[Current status]</DisplayTitle>
+            <DisplayTitle>[Current statusData]</DisplayTitle>
             <DateText>{todayDate}</DateText>
-            <StatusText>{status}</StatusText>
+            <StatusText>{statusData}</StatusText>
           </DateAndStatusWrapper>
           <TimeTableComponent
             displaySize={displaySize}
@@ -613,12 +601,12 @@ function App() {
                   <RadioLabel htmlFor="live">
                     <RadioBox
                       type="radio"
-                      name="status"
+                      name="statusData"
                       id="live"
-                      checked={status === "LIVE"}
+                      checked={statusData === "LIVE"}
                       onChange={(e) => {
-                        setStatus("LIVE");
-                        saveLocalStatus("LIVE");
+                        setStatusData("LIVE");
+                        saveFirebaseStatusData("LIVE");
                       }}
                     />
                     <CardFromText>LIVE</CardFromText>
@@ -626,12 +614,12 @@ function App() {
                   <RadioLabel htmlFor="meal">
                     <RadioBox
                       type="radio"
-                      name="status"
+                      name="statusData"
                       id="meal"
-                      checked={status === "Meal Time"}
+                      checked={statusData === "Meal Time"}
                       onChange={(e) => {
-                        setStatus("Meal Time");
-                        saveLocalStatus("Meal Time");
+                        setStatusData("Meal Time");
+                        saveFirebaseStatusData("Meal Time");
                       }}
                     />
                     <CardFromText>Meal Time</CardFromText>
@@ -641,12 +629,12 @@ function App() {
                   <RadioLabel htmlFor="recorded">
                     <RadioBox
                       type="radio"
-                      name="status"
+                      name="statusData"
                       id="recorded"
-                      checked={status === "24/7"}
+                      checked={statusData === "24/7"}
                       onChange={(e) => {
-                        setStatus("24/7");
-                        saveLocalStatus("24/7");
+                        setStatusData("24/7");
+                        saveFirebaseStatusData("24/7");
                       }}
                     />
                     <CardFromText>24/7</CardFromText>
@@ -654,12 +642,12 @@ function App() {
                   <RadioLabel htmlFor="shower">
                     <RadioBox
                       type="radio"
-                      name="status"
+                      name="statusData"
                       id="shower"
-                      checked={status === "Shower Room"}
+                      checked={statusData === "Shower Room"}
                       onChange={(e) => {
-                        setStatus("Shower Room");
-                        saveLocalStatus("Shower Room");
+                        setStatusData("Shower Room");
+                        saveFirebaseStatusData("Shower Room");
                       }}
                     />
                     <CardFromText>Shower Room</CardFromText>
@@ -676,7 +664,7 @@ function App() {
               </AreaContent>
             </AreaContainer> */}
             <AreaContainer className="outline">
-              <AreaTitle>사이드 바 너비</AreaTitle>
+              <AreaTitle>사이드 바 너비 조절(준비 중)</AreaTitle>
               <AreaContent className="row">
                 <input
                   type="range"
@@ -688,16 +676,18 @@ function App() {
                   // onTouchEnd={handleLazeChange}
                 />
               </AreaContent>
-              <AreaTitle>영역별 사이즈 조절</AreaTitle>
-              <label htmlFor="areavisible">
-                <span>영역보기</span>
-                <input
-                  id="areavisible"
-                  type="checkBox"
-                  checked={areavisible}
-                  onChange={(e) => setAreavisible(e.target.checked)}
-                />
-              </label>
+              <FlexWrapper>
+                <AreaTitle>영역별 사이즈 조절</AreaTitle>
+                <label htmlFor="areavisible">
+                  <span>영역보기</span>
+                  <input
+                    id="areavisible"
+                    type="checkBox"
+                    checked={areavisible}
+                    onChange={(e) => setAreavisible(e.target.checked)}
+                  />
+                </label>
+              </FlexWrapper>
               <AreaSubTitle>날짜 영역</AreaSubTitle>
               <AreaContent className="row">
                 <input
@@ -843,7 +833,19 @@ function App() {
           </LeftBox>
           <RightBox>
             <AreaContainer className="outline">
-              <AreaTitle>시간표 설정</AreaTitle>
+              <FlexWrapper>
+                <AreaTitle>시간표 설정</AreaTitle>
+                <label htmlFor="timeZone">
+                  <span>야간</span>
+                  <input
+                    id="timeZone"
+                    type="checkBox"
+                    checked={timeZone}
+                    onChange={() => setTimeZone((prev) => !prev)}
+                  />
+                  <span>주간</span>
+                </label>
+              </FlexWrapper>
               <AreaContent>
                 <Table
                   columnList={TIME_TABLE_COLUMN_LIST}
@@ -1204,4 +1206,9 @@ const TimeText = styled.p`
   margin: 0;
   font-size: 1.5rem;
   font-weight: 900;
+`;
+
+const FlexWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
