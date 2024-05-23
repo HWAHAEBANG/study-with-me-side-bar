@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { calcSecondsDiff } from "../util/calcSecondsDiff";
+import { timeToSeconds } from "../util/timeToSecons";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -13,8 +15,18 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
   const [percent, setPercent] = useState(100);
 
   // console.log("리렌더링");
-
   useEffect(() => {
+    console.log("타임");
+    if (remainingTime === "00:00:00") {
+      console.log("타임아웃");
+      timerStart("restart");
+    }
+  }, [remainingTime]);
+
+  const timerStart = (type?: string) => {
+    console.log("타이머 시작");
+    if (readOnlyTimeTable.length === 0) return;
+
     let currentIdx;
     let flag = true;
 
@@ -36,9 +48,15 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
         return;
       } else {
         flag = false;
-        return (currentIdx = index);
+        if (type === "restart") return (currentIdx = index + 1);
+        if (type === "start") return (currentIdx = index);
       }
     });
+
+    //  타임 테이블 다 끝났을 때, 없는 인덱스 참조해서 튕김현상 방지
+    if (!currentIdx || !timeArr[currentIdx]) return;
+
+    console.log("currentIdx", currentIdx);
 
     if (!currentIdx) return;
     if (currentIdx % 2 === 0) {
@@ -50,15 +68,17 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
 
     //=========================
 
-    const nowSession = readOnlyTimeTable[Math.floor(currentIdx / 2)];
-
-    const startT = Number(nowSession.startTime.replace(":", ""));
-
-    const endT = Number(nowSession.endTime.replace(":", ""));
+    const nowSession =
+      readOnlyTimeTable[
+        Math.floor(type === "start" ? currentIdx : (currentIdx + 1) / 2)
+      ];
 
     setPercent(
-      (Number(remainingTime.slice(0, 8).replaceAll(":", "")) /
-        (endT * 100 - startT * 100)) *
+      (timeToSeconds(remainingTime) /
+        calcSecondsDiff(
+          nowSession?.startTime + ":00",
+          nowSession?.endTime + ":00"
+        )) *
         100
     );
     //==========================
@@ -71,7 +91,11 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
     const target = new Date(now.getTime());
     target.setHours(Number(targetHour), Number(targetMinutes), 0, 0);
     setTargetTime(target);
-  }, [remainingTime, readOnlyTimeTable]);
+  };
+
+  useEffect(() => {
+    timerStart("start");
+  }, [readOnlyTimeTable]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -84,7 +108,7 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
 
     requestRef.current = requestAnimationFrame(updateTime);
     return () => cancelAnimationFrame(requestRef.current!);
-  }, [targetTime, remainingTime]);
+  }, [targetTime]);
 
   function getRemainingTime(current: Date, target: Date) {
     const difference = target.getTime() - current.getTime();

@@ -254,6 +254,11 @@ function App() {
     "13",
     "14",
     "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
     "L",
     "D",
   ];
@@ -288,7 +293,7 @@ function App() {
           onChange={(date) => handleChangeTimePicker(date, index, "startTime")}
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={5}
+          timeIntervals={1}
           timeCaption="Time"
           dateFormat="HH:mm"
           timeFormat="HH:mm"
@@ -302,7 +307,7 @@ function App() {
           onChange={(date) => handleChangeTimePicker(date, index, "endTime")}
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={5}
+          timeIntervals={1}
           timeCaption="Time"
           dateFormat="HH:mm"
           timeFormat="HH:mm"
