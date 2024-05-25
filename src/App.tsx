@@ -61,7 +61,7 @@ function App() {
   const [dDayList, setDDayList] = useState<any>([]);
   const [displaySetting, setDisplaySetting] = useState<any>([]);
   const [statusData, setStatusData] = useState("");
-  const [timeZone, setTimeZone] = useState<boolean>(false);
+  const [timeZone, setTimeZone] = useState<boolean>(true);
 
   const [readOnlyTimeTable, setReadOnlyTimeTable] = useState([]);
   const [readOnlyDDay, setReadOnlyDDay] = useState([]);
@@ -553,7 +553,7 @@ function App() {
             gap={displaySetting?.dateAndStatus?.gap}
             areavisible={areavisible}
           >
-            <DisplayTitle>[Current statusData]</DisplayTitle>
+            <DisplayTitle>[Current status]</DisplayTitle>
             <DateText>{todayDate}</DateText>
             <StatusText>{statusData}</StatusText>
           </DateAndStatusWrapper>
