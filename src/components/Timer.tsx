@@ -248,8 +248,8 @@ function Timer({
         //   // "#ffffff", */
         // ],
         backgroundColor: [
-          currentIndex % 2 !== 0 ? "#5a3f1c" : "#ffffff",
-          "#ffffff",
+          currentIndex % 2 !== 0 ? " #610B0B" : "rgba(255, 255, 255, 0)",
+          "rgba(255, 255, 255, 0)",
         ],
         hoverOffset: 4,
         // cutout: `${100 - gaugeWidth}%`, // 도넛 안쪽 원의 크기 설정
@@ -309,10 +309,12 @@ const Wrapper = styled.div`
 
 const Text = styled.span`
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 900;
+  color: #111111;
 `;
 
 const Count = styled.span`
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 900;
+  color: #111111;
 `;

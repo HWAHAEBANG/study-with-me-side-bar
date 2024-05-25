@@ -545,6 +545,7 @@ function App() {
           width={displaySetting?.sideBar?.width}
           mobilePreviewBtnVisible={mobilePreviewBtnVisible}
           primarycolor={tempColor}
+          id="target3"
         >
           <DateAndStatusWrapper
             width={displaySetting?.dateAndStatus?.width}
