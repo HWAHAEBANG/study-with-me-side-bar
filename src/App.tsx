@@ -61,7 +61,7 @@ function App() {
   const [dDayList, setDDayList] = useState<any>([]);
   const [displaySetting, setDisplaySetting] = useState<any>([]);
   const [statusData, setStatusData] = useState("");
-  const [timeZone, setTimeZone] = useState<boolean>(true);
+  const [timeZone, setTimeZone] = useState<boolean>(false);
 
   const [readOnlyTimeTable, setReadOnlyTimeTable] = useState([]);
   const [readOnlyDDay, setReadOnlyDDay] = useState([]);

@@ -248,8 +248,8 @@ function Timer({
         //   // "#ffffff", */
         // ],
         backgroundColor: [
-          currentIndex % 2 !== 0 ? " #610B0B" : "rgb(255, 255, 255, 0.8)",
-          "rgb(255, 255, 255, 0.8)",
+          currentIndex % 2 !== 0 ? " #610B0B" : "rgb(255, 255, 255, 0.3)",
+          "rgb(255, 255, 255, 0.3)",
         ],
         hoverOffset: 4,
         // cutout: `${100 - gaugeWidth}%`, // 도넛 안쪽 원의 크기 설정
