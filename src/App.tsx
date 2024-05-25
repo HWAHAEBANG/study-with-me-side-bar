@@ -1418,7 +1418,7 @@ const DisplayTitle = styled.p`
 const DateText = styled.p`
   margin: 0;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 900;
 `;
 
 const StatusText = styled.p`
