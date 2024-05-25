@@ -18,6 +18,8 @@ const TimeTableComponent = ({
     return () => clearInterval(intervalId);
   }, []);
 
+  console.log(displaySetting);
+
   return (
     <TimeTableWrapper
       width={displaySetting?.timeTable?.width}
@@ -68,6 +70,7 @@ const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
   padding: 0 0.5rem;
   border-radius: 1rem;
   font-weight: 700;
+  line-height: 12px;
   ${(props) =>
     props.now &&
     css`

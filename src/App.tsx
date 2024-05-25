@@ -1069,7 +1069,7 @@ const DisplaySection = styled.section<{
   background-color: ${(props) => props.primarycolor};
   width: ${(props) => props.width}px;
   /* height: calc(100% - 20px); */
-  height: calc(600px);
+  height: calc(580px);
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -1302,6 +1302,7 @@ const DateAndStatusWrapper = styled.div<{
   justify-content: center;
   align-items: center;
   border-radius: 0.5rem;
+  padding-top: 1rem;
 `;
 // const TimeTableWrapper = styled.div<{
 //   width?: number;
@@ -1364,6 +1365,7 @@ const DDayWrapper = styled.div<{
   justify-content: center;
   align-items: center;
   border-radius: 0.5rem;
+  padding-bottom: 1rem;
 `;
 
 const StyledDatePicker = styled(DatePicker)`
@@ -1414,13 +1416,13 @@ const DisplayTitle = styled.p`
 
 const DateText = styled.p`
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
 `;
 
 const StatusText = styled.p`
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 900;
   color: #ee4f36;
 `;
