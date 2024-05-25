@@ -74,7 +74,7 @@ const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
   ${(props) =>
     props.now &&
     css`
-      background-color: #ff31312e;
+      background-color: #ff4646;
     `}
   ${(props) =>
     props.meal &&
