@@ -1084,7 +1084,6 @@ const DisplaySection = styled.section<{
   }
 
   border-radius: 20px;
-  box-shadow: 0 6px 20px -15px #000;
   /*border-width: 1px 1px 0 0;
   border-color: #fff;
   border-style: solid;*/
@@ -1107,8 +1106,9 @@ const DisplaySection = styled.section<{
     /** 모바일 가로, 타블렛 세로 */
     /* display: none; */
     position: fixed;
-    background-color: rgba(255, 255, 255, 0.8); /* 밝게 보이도록 배경색 추가 */
+    background-color: rgba(255, 255, 255, 0.8); // 밝게 보이도록 배경색 추가
     top: 0;
+    box-shadow: 0 6px 20px -15px #000;
     left: ${(props) => `calc(-${props.width}px)`};
     -webkit-box-shadow: 0px 10px 13px -7px #000000,
       10px 3px 15px 0px rgba(0, 0, 0, 0.21);
