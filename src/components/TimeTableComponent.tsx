@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import Clock from "react-live-clock";
 
 const TimeTableComponent = ({
-  displaySize,
+  displaySetting,
   areavisible,
   readOnlyTimeTable,
 }: any) => {
@@ -20,9 +20,9 @@ const TimeTableComponent = ({
 
   return (
     <TimeTableWrapper
-      width={displaySize?.timeTable?.width}
-      height={displaySize?.timeTable?.height}
-      gap={displaySize?.timeTable?.gap}
+      width={displaySetting?.timeTable?.width}
+      height={displaySetting?.timeTable?.height}
+      gap={displaySetting?.timeTable?.gap}
       areavisible={areavisible}
     >
       {readOnlyTimeTable.map((item: any, idx: number) => (
@@ -58,7 +58,7 @@ const TimeTableWrapper = styled.div<{
   display: flex;
   flex-direction: column;
   gap: ${(props) => props.gap}px;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   border-radius: 0.5rem;
 `;
@@ -86,7 +86,7 @@ const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
 // import Clock from "react-live-clock";
 
 // const TimeTableComponent = ({
-//   displaySize,
+//   displaySetting,
 //   areavisible,
 //   readOnlyTimeTable,
 // }: any) => {
@@ -107,9 +107,9 @@ const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
 
 //   return (
 //     <TimeTableWrapper
-//       width={displaySize?.timeTable?.width}
-//       height={displaySize?.timeTable?.height}
-//       gap={displaySize?.timeTable?.gap}
+//       width={displaySetting?.timeTable?.width}
+//       height={displaySetting?.timeTable?.height}
+//       gap={displaySetting?.timeTable?.gap}
 //       areavisible={areavisible}
 //     >
 //       <p>{currentTime.toLocaleTimeString("en-GB", { hour12: false })}</p>

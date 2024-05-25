@@ -72,13 +72,14 @@ const TableHeader = styled.div`
 `;
 
 const TableRow = styled.div`
-  height: 2rem;
+  height: 2.2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eaeaea;
   padding: 0.2rem;
   /* background-color: yellow; */
+  padding: 10px 0;
 `;
 
 const Cell = styled.span<{ width: string }>`

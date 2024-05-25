@@ -4,32 +4,57 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { calcSecondsDiff } from "../util/calcSecondsDiff";
 import { timeToSeconds } from "../util/timeToSecons";
+import useSound from "use-sound";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-function Timer({ readOnlyTimeTable, timerVisible }: any) {
-  const [remainingTime, setRemainingTime] = useState("00:00:00");
-  const [text, setText] = useState("");
+function Timer({
+  timeZone,
+  readOnlyTimeTable,
+  timerVisible,
+  activeBell,
+  // bellVolume,
+  // textSize,
+  // gaugeColor,
+  // gaugeWidth,
+  breackText,
+}: any) {
+  const [remainingTime, setRemainingTime] = useState(" ");
+  const [text, setText] = useState("Good Morning");
   const [targetTime, setTargetTime] = useState<Date | null>(null);
-  const requestRef = useRef<number>();
   const [percent, setPercent] = useState(100);
   const [presentSession, setPresentSession] = useState(readOnlyTimeTable[0]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeArr2, setTimeArr2] = useState([]);
+  const [schoolbell] = useSound("/sound/schoolbell.mp3", {
+    volume: 5,
+  });
+
+  useEffect(() => {
+    // console.log("처음만");
+    setCurrentIndex(0);
+    setPercent(100);
+    setText("Good Morning");
+    setTargetTime(null);
+    setRemainingTime(" ");
+    setTimeArr2([]);
+    timerStart("start");
+  }, [readOnlyTimeTable]);
 
   useEffect(() => {
     updateChartPercent();
-    console.log("타임", remainingTime);
+    // console.log("타임", remainingTime);
     if (remainingTime === "00:00:00") {
-      console.log("타임아웃");
+      // console.log("타임아웃");
+      if (activeBell) schoolbell();
       timerStart("restart");
     }
-  }, [readOnlyTimeTable, remainingTime, currentIndex]);
+  }, [remainingTime, currentIndex]);
 
   const updateChartPercent = () => {
     //  타임 테이블 다 끝났을 때, 없는 인덱스 참조해서 튕김현상 방지
     // if (!currentIndex || !timeArr2 || !timeArr2[currentIndex]) return;
-    console.log("음", currentIndex, timeArr2.length);
+    // console.log("음", currentIndex, timeArr2.length);
 
     if (
       // currentIndex === 0 ||
@@ -38,12 +63,12 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
       currentIndex === timeArr2.length
     )
       return;
-    console.log("어케통과하노");
+    // console.log("어케통과하");
     console.log("currentIndex", currentIndex);
 
     if (!currentIndex) return;
     if (currentIndex % 2 === 0) {
-      setText("쉬는 시간");
+      setText(breackText);
     }
     if (currentIndex % 2 === 1) {
       setText(
@@ -58,25 +83,25 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
 
     // const nowSession =
 
-    console.log("디버그", presentSession?.startTime, presentSession?.endTime);
-    console.log(
-      "디버그2",
-      timeToSeconds(remainingTime),
-      calcSecondsDiff(
-        presentSession?.startTime + ":00",
-        presentSession?.endTime + ":00"
-      )
-    );
+    // console.log("디버그", presentSession?.startTime, presentSession?.endTime);
+    // console.log(
+    //   "디버그2",
+    //   timeToSeconds(remainingTime),
+    //   calcSecondsDiff(
+    //     presentSession?.startTime + ":00",
+    //     presentSession?.endTime + ":00"
+    //   )
+    // );
 
-    console.log(
-      "오잉",
-      (timeToSeconds(remainingTime) /
-        calcSecondsDiff(
-          presentSession?.startTime + ":00",
-          presentSession?.endTime + ":00"
-        )) *
-        100
-    );
+    // console.log(
+    //   "오잉",
+    //   (timeToSeconds(remainingTime) /
+    //     calcSecondsDiff(
+    //       presentSession?.startTime + ":00",
+    //       presentSession?.endTime + ":00"
+    //     )) *
+    //     100
+    // );
 
     setPercent(
       (timeToSeconds(remainingTime) /
@@ -89,7 +114,7 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
     //==========================
 
     const nextTarget = timeArr2[currentIndex];
-    console.log("넥스트타겟", timeArr2);
+    // console.log("넥스트타겟", timeArr2);
 
     //@ts-ignore
     const targetHour = nextTarget.split(":")[0];
@@ -103,7 +128,7 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
   };
 
   const timerStart = (type?: string) => {
-    console.log("타이머 시작");
+    // console.log("타이머 시작");
     if (readOnlyTimeTable.length === 0) return;
 
     let flag = true;
@@ -139,28 +164,9 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
   };
 
   useEffect(() => {
-    console.log("처음만");
-
-    timerStart("start");
-  }, [readOnlyTimeTable]);
-
-  // useEffect(() => {
-  //   const updateTime = () => {
-  //     const now = new Date();
-  //     if (targetTime) {
-  //       setRemainingTime(getRemainingTime(now, targetTime));
-  //     }
-  //     requestRef.current = requestAnimationFrame(updateTime);
-  //   };
-
-  //   requestRef.current = requestAnimationFrame(updateTime);
-  //   return () => cancelAnimationFrame(requestRef.current!);
-  // }, [readOnlyTimeTable, targetTime]);
-
-  useEffect(() => {
     const intervalId = setInterval(() => {
       const now = new Date();
-      setCurrentTime(now);
+      // setCurrentTime(now);
       if (targetTime) {
         setRemainingTime(getRemainingTime(now, targetTime));
       }
@@ -186,19 +192,19 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
 
   //=====================================
   // test
-  const [currentTime, setCurrentTime] = useState(new Date());
+  // const [currentTime, setCurrentTime] = useState(new Date());
 
-  const updateTime = () => {
-    setCurrentTime(new Date());
-  };
+  // const updateTime = () => {
+  //   setCurrentTime(new Date());
+  // };
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      updateTime();
-    }, 1000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     updateTime();
+  //   }, 1000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   //================
   const options = {
@@ -208,15 +214,11 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
       legend: {
         position: "bottom",
       },
+      tooltip: {
+        enabled: false, // 툴팁 비활성화
+      },
       title: {
         display: false,
-      },
-      datalabels: {
-        display: true,
-        // color: "#fff",
-        weight: "bold",
-        textShadowBlur: 10,
-        textShadowColor: "black",
       },
       doughnutlabel: {
         labels: [
@@ -241,9 +243,20 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
       {
         label: "My First Dataset",
         data: [percent, 100 - percent],
-        backgroundColor: ["#814915", "#ffffff"],
+        // backgroundColor: [
+        //   /*           currentIndex % 2 === 0 ? "#5a3f1c" : gaugeColor,
+        //   // "#ffffff", */
+        // ],
+        backgroundColor: [
+          currentIndex % 2 !== 0 ? "#5a3f1c" : "#ffffff",
+          "#ffffff",
+        ],
         hoverOffset: 4,
-        cutout: "90%", // 도넛 안쪽 원의 크기 설정
+        // cutout: `${100 - gaugeWidth}%`, // 도넛 안쪽 원의 크기 설정
+        cutout: `90%`, // 도넛 안쪽 원의 크기 설정
+        borderRadius: [20, 0],
+        borderWidth: [0],
+        spacing: 0,
       },
     ],
   };
@@ -262,9 +275,9 @@ function Timer({ readOnlyTimeTable, timerVisible }: any) {
           <Wrapper>
             <Text>{text}</Text>
             <Count>{remainingTime}</Count>
-            <Count>
+            {/* <Count>
               {currentTime.toLocaleTimeString("en-GB", { hour12: false })}
-            </Count>
+            </Count> */}
           </Wrapper>
         </>
       )}
@@ -303,141 +316,3 @@ const Count = styled.span`
   font-size: 2rem;
   font-weight: 700;
 `;
-//========================================================================
-
-// import React, { useState, useEffect, useRef } from "react";
-// import styled from "styled-components";
-
-// function Timer({ readOnlyTimeTable, timerVisible }: any) {
-//   const [currentTime, setCurrentTime] = useState(new Date());
-//   const [targetTime, setTargetTime] = useState<Date | null>(null);
-//   const [remainingTime, setRemainingTime] = useState("00:00:00");
-//   const requestRef = useRef<number>();
-//   const [text, setText] = useState("");
-//   const [timeIndex, setTimeIndex] = useState(-1);
-
-//   useEffect(() => {
-//     let currentIdx;
-//     let flag = true;
-
-//     const timeArr = readOnlyTimeTable
-//       .map((item: any) => [item.startTime, item.endTime])
-//       .flat();
-
-//     // console.log(timeArr);
-
-//     timeArr.forEach((item: string, index: number) => {
-//       const currentTimeNum = Number(
-//         currentTime
-//           .toLocaleTimeString("en-GB", { hour12: false })
-//           .replaceAll(":", "")
-//       );
-//       const tableTimeNum = Number(item.replace(":", "") + "00");
-
-//       //   console.log("커런", currentTimeNum, "테이", tableTimeNum);
-
-//       if (!flag || currentTimeNum >= tableTimeNum) {
-//         return;
-//       } else {
-//         flag = false;
-//         return (currentIdx = index);
-//       }
-//     });
-
-//     // console.log("커튼트 인덱스다", currentIdx);
-
-//     if (!currentIdx) return console.log("현재위치 못찾음");
-//     if (currentIdx % 2 === 0) {
-//       //   setTimeIndex(currentIdx);
-//       setText("쉬는 시간");
-//       //   return;
-//     }
-//     if (currentIdx % 2 === 1) {
-//       //   setTimeIndex(currentIdx);
-//       setText(readOnlyTimeTable[Math.floor(currentIdx / 2)].session + " 교시");
-//     }
-
-//     // console.log("제발", timeArr[currentIdx]);
-//     const nextTarget = timeArr[currentIdx];
-//     const targetHour = nextTarget.split(":")[0];
-//     const targetMinutes = nextTarget.split(":")[1];
-
-//     const now = new Date();
-//     const target = new Date(now.getTime());
-//     // target.setHours(19, 30, 0, 0); // 목표 시간을 06:10:00으로 설정
-//     target.setHours(Number(targetHour), Number(targetMinutes), 0, 0);
-//     setTargetTime(target);
-//   }, [
-//     currentTime,
-//     readOnlyTimeTable,
-//     timeIndex,
-//     setTimeIndex,
-//     setText,
-//     setTargetTime,
-//   ]);
-
-//   useEffect(() => {
-//     const updateTime = () => {
-//       const now = new Date();
-//       setCurrentTime(now);
-//       if (targetTime) {
-//         setRemainingTime(getRemainingTime(now, targetTime));
-//       }
-//       requestRef.current = requestAnimationFrame(updateTime);
-//     };
-
-//     requestRef.current = requestAnimationFrame(updateTime);
-//     return () => cancelAnimationFrame(requestRef.current!);
-//   }, [timeIndex, targetTime]);
-
-//   function getRemainingTime(current: Date, target: Date) {
-//     const difference = target.getTime() - current.getTime();
-//     const totalSeconds = Math.max(Math.floor(difference / 1000), 0);
-//     const hours = Math.floor(totalSeconds / 3600)
-//       .toString()
-//       .padStart(2, "0");
-//     const minutes = Math.floor((totalSeconds % 3600) / 60)
-//       .toString()
-//       .padStart(2, "0");
-//     const seconds = (totalSeconds % 60).toString().padStart(2, "0");
-//     return `${hours}:${minutes}:${seconds}`;
-//   }
-
-//   return (
-//     <Container>
-//       {timerVisible && (
-//         <Wrapper>
-//           <Text>{text}</Text>
-//           <Count>{remainingTime}</Count>
-//         </Wrapper>
-//       )}
-//     </Container>
-//   );
-// }
-// export default Timer;
-
-// const Container = styled.div`
-//   width: 15rem;
-//   height: 15rem;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-// `;
-
-// const Wrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-// `;
-
-// const Text = styled.span`
-//   font-size: 1rem;
-//   font-weight: 700;
-// `;
-
-// const Count = styled.span`
-//   font-size: 2rem;
-//   font-weight: 700;
-// `;

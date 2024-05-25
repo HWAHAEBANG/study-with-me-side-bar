@@ -5,6 +5,7 @@ body {
     "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #c7c7c7;
 }
 
 @import url("https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css");

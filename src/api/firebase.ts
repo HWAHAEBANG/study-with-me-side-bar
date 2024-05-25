@@ -60,8 +60,8 @@ export const saveFirebaseDDayDataList = (array: any) => {
 };
 
 // 세팅 데이터 조회
-export const getFirebaseSettingData = () => {
-  return get(ref(database, "setting"))
+export const getFirebaseSettingData = (timeZone: boolean) => {
+  return get(ref(database, `setting/${timeZone ? "dayTime" : "nightTime"}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
         return snapshot.val();
@@ -76,9 +76,54 @@ export const getFirebaseSettingData = () => {
 };
 
 // 세팅 데이터 저장
-export const saveFirebaseSettingData = (array: any) => {
-  set(ref(database, `setting`), array);
+export const saveFirebaseSettingData = (timeZone: boolean, array: any) => {
+  set(ref(database, `setting/${timeZone ? "dayTime" : "nightTime"}`), array);
 };
+
+// 타이머 데이터 조회
+export const getFirebaseTimerSettingData = () => {
+  return get(ref(database, `timerSetting`))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        return snapshot.val();
+      } else {
+        console.log("No data available");
+        return [];
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+// 타이머 데이터 저장
+export const saveFirebaseTimerSettingData = (array: any) => {
+  set(ref(database, `timerSetting`), array);
+};
+
+//========================================
+
+// 타이머 데이터 조회
+export const getFirebaseTempTimerSettingData = () => {
+  return get(ref(database, `timerTempSetting`))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        return snapshot.val();
+      } else {
+        console.log("No data available");
+        return "";
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+// 타이머 데이터 저장
+export const saveFirebaseTempTimerSettingData = (data: any) => {
+  set(ref(database, `timerTempSetting`), data);
+};
+//========================================
 
 // 상태 데이터 조회
 export const getFirebaseStatusData = () => {

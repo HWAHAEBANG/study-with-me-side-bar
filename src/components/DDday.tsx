@@ -12,13 +12,20 @@ const DDday = ({ readOnlyDDay }: any) => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 3000,
     arrows: false,
   };
 
   function convertToDday(targetDateStr: string) {
-    const targetDate = new Date(targetDateStr);
-    const today = new Date();
+    // 한국 시간대로 날짜를 변환하는 함수
+    function toKST(date: Date) {
+      const utc = date.getTime() + date.getTimezoneOffset() * 60000;
+      const kstOffset = 9 * 60 * 60000; // 한국 시간대는 UTC+9
+      return new Date(utc + kstOffset);
+    }
+
+    const targetDate = toKST(new Date(targetDateStr));
+    const today = toKST(new Date());
 
     // 목표 날짜와 현재 날짜 사이의 일수 차이 계산
     const differenceInTime = targetDate.getTime() - today.getTime();
@@ -54,9 +61,8 @@ export default DDday;
 
 const StyledWrapper = styled.section`
   overflow: hidden;
-  /* background-color: red; */
   width: 100%;
-  height: 100%;
+  height: 4rem;
 `;
 
 const StyledSlider = styled(Slider)`

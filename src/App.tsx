@@ -1,12 +1,13 @@
 import React, {
   ChangeEvent,
+  MouseEvent,
   TouchEvent,
   useEffect,
   useRef,
   useState,
 } from "react";
 import "./App.css";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Table from "./components/Table";
 import moment from "moment";
 import DatePicker from "react-datepicker";
@@ -34,17 +35,33 @@ import {
   saveFirebaseTimeTableDataList,
   saveFirebaseSettingData,
   saveFirebaseStatusData,
+  getFirebaseTimerSettingData,
+  saveFirebaseTimerSettingData,
+  saveFirebaseTempTimerSettingData,
+  getFirebaseTempTimerSettingData,
 } from "./api/firebase";
+import { CiMonitor } from "react-icons/ci";
+import { RxCross2 } from "react-icons/rx";
 
 function App() {
   const tempColor = "#E7E0D8";
 
   // 테이블 테이터 ===================================================================
+  const initialSizeState = {
+    // 추후 로컬 스토리지데이터로 교체
+    sideBar: { width: 200, tempWidth: 200 },
+    dateAndStatus: { width: 180, height: 110, gap: 1 },
+    timeTable: { width: 180, height: 300, gap: 1 },
+    currentTime: { width: 180, height: 70, gap: 1 },
+    video: { width: 180, height: 80, gap: 1 },
+    dDay: { width: 180, height: 140, gap: 3 },
+  };
+
   const [timetableList, setTimetableList] = useState<any>([]);
   const [dDayList, setDDayList] = useState<any>([]);
-  const [settingData, setSettingData] = useState<any>([]);
+  const [displaySetting, setDisplaySetting] = useState<any>([]);
   const [statusData, setStatusData] = useState("");
-  const [timeZone, setTimeZone] = useState<boolean>(false);
+  const [timeZone, setTimeZone] = useState<boolean>(true);
 
   const [readOnlyTimeTable, setReadOnlyTimeTable] = useState([]);
   const [readOnlyDDay, setReadOnlyDDay] = useState([]);
@@ -222,16 +239,16 @@ function App() {
 
   const TIME_TABLE_COLUMN_LIST = [
     { accessor: "session", text: "교시", width: "5rem" },
-    { accessor: "startTime", text: "시작 시간", width: "7rem" },
-    { accessor: "endTime", text: "종료 시간", width: "7rem" },
+    { accessor: "startTime", text: "시작 시간", width: "4rem" },
+    { accessor: "endTime", text: "종료 시간", width: "4rem" },
     { accessor: "color", text: "강조", width: "3rem" },
     { accessor: "deleteBtn", text: "", width: "3rem" },
   ];
 
   const DDay_COLUMN_LIST = [
     { accessor: "id", text: "순번", width: "3rem" },
-    { accessor: "testName", text: "시험명", width: "13rem" },
-    { accessor: "testDate", text: "시험날짜", width: "7rem" },
+    { accessor: "testName", text: "시험명", width: "8rem" },
+    { accessor: "testDate", text: "시험날짜", width: "6rem" },
     { accessor: "deleteBtn", text: "", width: "3rem" },
   ];
 
@@ -269,7 +286,7 @@ function App() {
       session: (
         <DropDown
           // disabled={disabled}
-          style={{ margin: 0, width: 80, height: 30, padding: "0" }}
+          style={{ margin: 0, width: 60, height: 30, padding: "0" }}
           // width="70px"
           value={timetableList[index].session}
           onChange={(e) =>
@@ -293,7 +310,7 @@ function App() {
           onChange={(date) => handleChangeTimePicker(date, index, "startTime")}
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={1}
+          timeIntervals={5}
           timeCaption="Time"
           dateFormat="HH:mm"
           timeFormat="HH:mm"
@@ -307,7 +324,7 @@ function App() {
           onChange={(date) => handleChangeTimePicker(date, index, "endTime")}
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={1}
+          timeIntervals={5}
           timeCaption="Time"
           dateFormat="HH:mm"
           timeFormat="HH:mm"
@@ -334,65 +351,60 @@ function App() {
     })
   );
 
-  const dDayTableDataList = dDayList.map((data: any, index: number) => ({
-    ...data,
-    testName: (
-      <Input
-        type="string"
-        value={dDayList[index].testName}
-        onChange={(e) =>
-          setDDayList((prev: any) =>
-            prev.map((item: any, idx: number) =>
-              idx === index ? { ...item, testName: e.target.value } : item
+  const dDayTableDataList = dDayList
+    .sort(
+      (a: any, b: any) =>
+        a.testDate.replaceAll("-", "") - b.testDate.replaceAll("-", "")
+    )
+    .map((data: any, index: number) => ({
+      ...data,
+      id: index + 1,
+      testName: (
+        <StyledInput
+          type="string"
+          value={dDayList[index].testName}
+          onChange={(e) =>
+            setDDayList((prev: any) =>
+              prev.map((item: any, idx: number) =>
+                idx === index ? { ...item, testName: e.target.value } : item
+              )
             )
-          )
-        }
-      />
-    ),
-    testDate: (
-      <StyledDatePicker
-        selected={new Date()}
-        value={dDayList[index].testDate}
-        onChange={(date) => handleChangeDatePicker(date, index, "testDate")}
-        locale="ko-KR"
-        dateFormat="yyyy/MM/dd"
-        placeholderText="yyyy/MM/dd"
-      />
-    ),
+          }
+        />
+      ),
+      testDate: (
+        <StyledDatePicker
+          selected={new Date()}
+          value={dDayList[index].testDate}
+          onChange={(date) => handleChangeDatePicker(date, index, "testDate")}
+          locale="ko-KR"
+          dateFormat="yyyy/MM/dd"
+          placeholderText="yyyy/MM/dd"
+        />
+      ),
 
-    deleteBtn: <Button onClick={() => handleDeleteDDayRow(index)}>삭제</Button>,
-  }));
+      deleteBtn: (
+        <Button onClick={() => handleDeleteDDayRow(index)}>삭제</Button>
+      ),
+    }));
 
   // CSS 세팅 ======================================================================
-  const initialSizeState = {
-    // 추후 로컬 스토리지데이터로 교체
-    sideBar: { width: 200 },
-    dateAndStatus: { width: 180, height: 110, gap: 1 },
-    timeTable: { width: 180, height: 300, gap: 1 },
-    currentTime: { width: 180, height: 70, gap: 1 },
-    video: { width: 180, height: 80, gap: 1 },
-    dDay: { width: 180, height: 140, gap: 3 },
-  };
-
-  const [displaySize, setDisplaySize] = useState(initialSizeState);
-
   const todayDate = moment().format("MMM D ddd");
 
-  const handleLazeChange = (e: TouchEvent<HTMLInputElement>) => {
-    console.log("뭐노", e);
-  };
-
-  const handleChangeSize = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeSize = (e: any) => {
     const { id, name, valueAsNumber } = e?.target;
-
-    console.log("뭐", id, name, valueAsNumber);
-
-    setDisplaySize((prev) => ({
+    setDisplaySetting((prev: any) => ({
       ...prev,
       // @ts-ignore
       [id]: { ...prev[id], [name]: valueAsNumber },
     }));
   };
+
+  useEffect(() => {
+    if (displaySetting.length === 0) return;
+    // debounce(() => saveFirebaseSettingData(displaySetting));
+    saveFirebaseSettingData(timeZone, displaySetting);
+  }, [displaySetting]);
 
   const [areavisible, setAreavisible] = useState<boolean>(false);
 
@@ -420,11 +432,20 @@ function App() {
       const dDayTableRes = await getFirebaseDDayDataList();
       setDDayList(dDayTableRes);
 
-      const getSettingRes = await getFirebaseSettingData();
-      setSettingData(getSettingRes);
+      const getSettingRes = await getFirebaseSettingData(timeZone);
+      console.log(timeZone, getSettingRes);
+
+      setDisplaySetting(getSettingRes);
 
       const getStatusRes = await getFirebaseStatusData();
       setStatusData(getStatusRes);
+
+      // 보류
+      // const getTimerSettingRes = await getFirebaseTimerSettingData();
+      // setTimerSetting(getTimerSettingRes);
+
+      const getTempTimerSettingRes = await getFirebaseTempTimerSettingData();
+      setTempTimerSetting(getTempTimerSettingRes);
     };
     getData();
   }, [timeZone]);
@@ -465,18 +486,70 @@ function App() {
   }, []);
 
   const [timerVisible, setTimerVisible] = useState(true);
+  const [bellActive, setBellActive] = useState(true);
+  const [mobilePreviewBtnVisible, setMobilePreviewBtnVisible] = useState(false);
+
+  const initTimerSet = {
+    bellVolume: 100,
+    textSize: 12,
+    gaugeWidth: 10,
+    gaugeColor: "red",
+    breakText: "Break time",
+  };
+  const [timerSetting, setTimerSetting] = useState(initTimerSet);
+
+  const handleChangeTimerSetting = (e: any) => {
+    const { name, valueAsNumber, value } = e?.target;
+
+    if (name === "breakText") {
+      setTimerSetting((prev: any) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      setTimerSetting((prev: any) => ({
+        ...prev,
+        [name]: valueAsNumber,
+      }));
+    }
+  };
+
+  const [timerTempSetting, setTempTimerSetting] = useState("");
+
+  const handleChangeTempTimerSetting = (e: any) => {
+    const { value } = e?.target;
+    setTempTimerSetting(value);
+  };
+  useEffect(() => {
+    if (!timerTempSetting) return;
+    saveFirebaseTempTimerSettingData(timerTempSetting);
+  }, [timerTempSetting]);
 
   return (
     <Main>
+      <MobilePreviewBtn>
+        {mobilePreviewBtnVisible ? (
+          <RxCross2
+            fontSize={20}
+            onClick={() => setMobilePreviewBtnVisible(false)}
+          />
+        ) : (
+          <CiMonitor
+            fontSize={20}
+            onClick={() => setMobilePreviewBtnVisible(true)}
+          />
+        )}
+      </MobilePreviewBtn>
       <Inner>
         <DisplaySection
-          width={displaySize?.sideBar?.width}
+          width={displaySetting?.sideBar?.width}
+          mobilePreviewBtnVisible={mobilePreviewBtnVisible}
           primarycolor={tempColor}
         >
           <DateAndStatusWrapper
-            width={displaySize?.dateAndStatus?.width}
-            height={displaySize?.dateAndStatus?.height}
-            gap={displaySize?.dateAndStatus?.gap}
+            width={displaySetting?.dateAndStatus?.width}
+            height={displaySetting?.dateAndStatus?.height}
+            gap={displaySetting?.dateAndStatus?.gap}
             areavisible={areavisible}
           >
             <DisplayTitle>[Current statusData]</DisplayTitle>
@@ -484,14 +557,14 @@ function App() {
             <StatusText>{statusData}</StatusText>
           </DateAndStatusWrapper>
           <TimeTableComponent
-            displaySize={displaySize}
+            displaySetting={displaySetting}
             areavisible={areavisible}
             readOnlyTimeTable={readOnlyTimeTable}
           />
           {/* <TimeTableWrapper
-            width={displaySize?.timeTable?.width}
-            height={displaySize?.timeTable?.height}
-            gap={displaySize?.timeTable?.gap}
+            width={displaySetting?.timeTable?.width}
+            height={displaySetting?.timeTable?.height}
+            gap={displaySetting?.timeTable?.gap}
             areavisible={areavisible}
           >
             {readOnlyTimeTable.map((item: any, idx: number) => (
@@ -507,9 +580,9 @@ function App() {
             ))}
           </TimeTableWrapper> */}
           <CurrentTimeWrapper
-            width={displaySize?.currentTime?.width}
-            height={displaySize?.currentTime?.height}
-            gap={displaySize?.currentTime?.gap}
+            width={displaySetting?.currentTime?.width}
+            height={displaySetting?.currentTime?.height}
+            gap={displaySetting?.currentTime?.gap}
             areavisible={areavisible}
           >
             <DisplayTitle>[Current time]</DisplayTitle>
@@ -518,16 +591,16 @@ function App() {
             </TimeText>
           </CurrentTimeWrapper>
           <VideoWrapper
-            width={displaySize?.video?.width}
-            height={displaySize?.video?.height}
+            width={displaySetting?.video?.width}
+            height={displaySetting?.video?.height}
             areavisible={areavisible}
           >
             비디오 영역
           </VideoWrapper>
           <DDayWrapper
-            width={displaySize?.dDay?.width}
-            height={displaySize?.dDay?.height}
-            gap={displaySize?.dDay?.gap}
+            width={displaySetting?.dDay?.width}
+            height={displaySetting?.dDay?.height}
+            gap={displaySetting?.dDay?.gap}
             areavisible={areavisible}
           >
             <DisplayTitle>[D-day]</DisplayTitle>
@@ -554,10 +627,17 @@ function App() {
             </AreaContainer> */}
             <AreaContainer className="outline">
               <AreaTitle>수업 시간 타이머</AreaTitle>
-              <AreaContent className="row">
+              <AreaContent>
                 <Timer
                   readOnlyTimeTable={readOnlyTimeTable}
                   timerVisible={timerVisible}
+                  activeBell={bellActive}
+                  // bellVolume={timerSetting?.bellVolume}
+                  // textSize={timerSetting?.textSize}
+                  // gaugeWidth={timerSetting?.gaugeWidth}
+                  // gaugeColor={timerSetting?.gaugeColor}
+                  breackText={timerSetting?.breakText}
+                  timeZone={timeZone}
                 />
 
                 {/* <Countdown date={Date.now() + 5000} renderer={renderer} /> */}
@@ -570,19 +650,56 @@ function App() {
                     <span>자동 실행 ON/OFF</span>
                     <input type="checkBox" id="autoStartSessionTimer" />
                   </label> */}
-                  <label htmlFor="autoStartSessionTimer">
-                    {/* <Toggle
-                      state={todoInfo?.isActiveRangeToggle}
-                      setState={setIsActiveRangeToggle}
-                    /> */}
+                  <label>
                     <span>보이기/숨기기</span>
+                    <Toggle state={timerVisible} setState={setTimerVisible} />
+                  </label>
+                  <label>
+                    <span>종소리 ON/OFF</span>
+                    <Toggle state={bellActive} setState={setBellActive} />
+                  </label>
+                  {/* <label>
+                    <span> 종소리 음량 : </span>
                     <input
-                      type="checkBox"
-                      checked={timerVisible}
-                      onChange={(e) => setTimerVisible(e.target.checked)}
-                      id="autoStartSessionTimer"
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={timerSetting?.bellVolume}
+                      name="bellVolume"
+                      onChange={handleChangeTimerSetting}
                     />
                   </label>
+                  <label>
+                    <span> 텍스트 크기 : </span>
+                    <input
+                      type="range"
+                      min={5}
+                      max={50}
+                      value={timerSetting?.textSize}
+                      name="textSize"
+                      onChange={handleChangeTimerSetting}
+                    />
+                  </label>
+                  <label>
+                    <span> 게이지 너비 : </span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={timerSetting?.gaugeWidth}
+                      name="gaugeWidth"
+                      onChange={handleChangeTimerSetting}
+                    />
+                  </label> */}
+                  <label>
+                    <span> 쉬는 시간 문구 : </span>
+                    <StyledInput
+                      value={timerTempSetting}
+                      // name="breakText"
+                      onChange={handleChangeTempTimerSetting}
+                    />
+                  </label>
+
                   {/* <ManualStartForm>
                     <p>수동 실행</p>
                     <ManualStartWrapper>
@@ -669,29 +786,29 @@ function App() {
               </AreaContent>
             </AreaContainer> */}
             <AreaContainer className="outline">
-              <AreaTitle>사이드 바 너비 조절(준비 중)</AreaTitle>
+              <AreaTitle>전체 너비 조절 (Only PC)</AreaTitle>
               <AreaContent className="row">
                 <input
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.sideBar?.width} //보류
-                  // data-id="sideBar"
-                  // name="width"
-                  // onTouchEnd={handleLazeChange}
+                  value={displaySetting?.sideBar?.tempWidth} //보류
+                  id="sideBar"
+                  name="tempWidth"
+                  onChange={handleChangeSize}
+                  onMouseUp={() =>
+                    setDisplaySetting((prev: any) => ({
+                      ...prev,
+                      sideBar: {
+                        ...prev.sideBar,
+                        width: prev?.sideBar?.tempWidth,
+                      },
+                    }))
+                  }
                 />
               </AreaContent>
               <FlexWrapper>
                 <AreaTitle>영역별 사이즈 조절</AreaTitle>
-                <label htmlFor="areavisible">
-                  <span>영역보기</span>
-                  <input
-                    id="areavisible"
-                    type="checkBox"
-                    checked={areavisible}
-                    onChange={(e) => setAreavisible(e.target.checked)}
-                  />
-                </label>
               </FlexWrapper>
               <AreaSubTitle>날짜 영역</AreaSubTitle>
               <AreaContent className="row">
@@ -699,28 +816,34 @@ function App() {
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.dateAndStatus?.width}
+                  value={displaySetting?.dateAndStatus?.width}
                   id="dateAndStatus"
                   name="width"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.dateAndStatus?.height}
+                  value={displaySetting?.dateAndStatus?.height}
                   id="dateAndStatus"
                   name="height"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={15}
-                  value={displaySize?.dateAndStatus?.gap}
+                  value={displaySetting?.dateAndStatus?.gap}
                   id="dateAndStatus"
                   name="gap"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
               </AreaContent>
               <AreaSubTitle>시간표 영역</AreaSubTitle>
@@ -729,28 +852,34 @@ function App() {
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.timeTable?.width}
+                  value={displaySetting?.timeTable?.width}
                   id="timeTable"
                   name="width"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.timeTable?.height}
+                  value={displaySetting?.timeTable?.height}
                   id="timeTable"
                   name="height"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={15}
-                  value={displaySize?.timeTable?.gap}
+                  value={displaySetting?.timeTable?.gap}
                   id="timeTable"
                   name="gap"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
               </AreaContent>
               <AreaSubTitle>현재 시간 영역</AreaSubTitle>
@@ -759,28 +888,34 @@ function App() {
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.currentTime?.width}
+                  value={displaySetting?.currentTime?.width}
                   id="currentTime"
                   name="width"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.currentTime?.height}
+                  value={displaySetting?.currentTime?.height}
                   id="currentTime"
                   name="height"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={15}
-                  value={displaySize?.currentTime?.gap}
+                  value={displaySetting?.currentTime?.gap}
                   id="currentTime"
                   name="gap"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
               </AreaContent>
               <AreaSubTitle>비디오 영역</AreaSubTitle>
@@ -789,19 +924,23 @@ function App() {
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.video?.width}
+                  value={displaySetting?.video?.width}
                   id="video"
                   name="width"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.video?.height}
+                  value={displaySetting?.video?.height}
                   id="video"
                   name="height"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
               </AreaContent>
               <AreaSubTitle>디데이 영역</AreaSubTitle>
@@ -810,28 +949,34 @@ function App() {
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.dDay?.width}
+                  value={displaySetting?.dDay?.width}
                   id="dDay"
                   name="width"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={500}
-                  value={displaySize?.dDay?.height}
+                  value={displaySetting?.dDay?.height}
                   id="dDay"
                   name="height"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
                 <input
                   type="range"
                   min={0}
                   max={15}
-                  value={displaySize?.dDay?.gap}
+                  value={displaySetting?.dDay?.gap}
                   id="dDay"
                   name="gap"
                   onChange={handleChangeSize}
+                  onMouseDown={() => setAreavisible(true)}
+                  onMouseUp={() => setAreavisible(false)}
                 />
               </AreaContent>
             </AreaContainer>
@@ -840,14 +985,15 @@ function App() {
             <AreaContainer className="outline">
               <FlexWrapper>
                 <AreaTitle>시간표 설정</AreaTitle>
-                <label htmlFor="timeZone">
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
                   <span>야간</span>
-                  <input
-                    id="timeZone"
-                    type="checkBox"
-                    checked={timeZone}
-                    onChange={() => setTimeZone((prev) => !prev)}
-                  />
+                  <Toggle state={timeZone} setState={setTimeZone} />
                   <span>주간</span>
                 </label>
               </FlexWrapper>
@@ -885,9 +1031,17 @@ function App() {
 export default App;
 
 const Main = styled.main`
-  height: 100vh;
-  background-color: #c7c7c7;
+  height: 100dvh;
   /* background-color: red; */
+
+  @media screen and (max-width: 768px) {
+    /** 모바일 가로, 타블렛 세로 */
+    height: auto;
+  }
+
+  @media screen and (max-width: 480px) {
+    /** 모바일 세로 */
+  }
 `;
 
 const Inner = styled.div`
@@ -897,9 +1051,21 @@ const Inner = styled.div`
   /* background-color: pink; */
   display: flex;
   gap: 1rem;
+
+  @media screen and (max-width: 768px) {
+    /** 모바일 가로, 타블렛 세로 */
+  }
+
+  @media screen and (max-width: 480px) {
+    /** 모바일 세로 */
+  }
 `;
 
-const DisplaySection = styled.section<{ width: number; primarycolor: string }>`
+const DisplaySection = styled.section<{
+  width: number;
+  primarycolor: string;
+  mobilePreviewBtnVisible: boolean;
+}>`
   background-color: ${(props) => props.primarycolor};
   width: ${(props) => props.width}px;
   height: calc(100% - 20px);
@@ -909,6 +1075,7 @@ const DisplaySection = styled.section<{ width: number; primarycolor: string }>`
   align-items: center;
   gap: 0.5rem; // 추후 동적으로 설정
   margin: 10px 0;
+  z-index: 1;
 
   p {
     margin: 0;
@@ -932,6 +1099,29 @@ const DisplaySection = styled.section<{ width: number; primarycolor: string }>`
     border-width: 1px 1px 0 0; /* 입체감 흰색 테두리 */
     border-color: #fff;
     border-style: solid;
+  }
+
+  @media screen and (max-width: 768px) {
+    /** 모바일 가로, 타블렛 세로 */
+    /* display: none; */
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.8); /* 밝게 보이도록 배경색 추가 */
+    top: 0;
+    left: ${(props) => `calc(-${props.width}px)`};
+    -webkit-box-shadow: 0px 10px 13px -7px #000000,
+      10px 3px 15px 0px rgba(0, 0, 0, 0.21);
+    box-shadow: 0px 10px 13px -7px #000000,
+      10px 3px 15px 0px rgba(0, 0, 0, 0.21);
+    ${(props) =>
+      props.mobilePreviewBtnVisible &&
+      css`
+        transform: ${`translate(${props.width + 10}px, 0)`};
+        transition: all 0.2s ease-in-out;
+      `}
+  }
+
+  @media screen and (max-width: 480px) {
+    /** 모바일 세로 */
   }
 `;
 
@@ -964,17 +1154,37 @@ const ControllerSection = styled.section`
     border-color: #fff;
     border-style: solid;
   }
+
+  @media screen and (max-width: 768px) {
+    /** 모바일 가로, 타블렛 세로 */
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 0;
+    gap: 0;
+    width: 100vw;
+  }
+
+  @media screen and (max-width: 480px) {
+    /** 모바일 세로 */
+  }
 `;
 
 const LeftBox = styled.div`
   height: 100%;
-  /* background-color: purple; */
   padding: 1rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   overflow-y: auto;
+
+  @media screen and (max-width: 768px) {
+    /** 모바일 가로, 타블렛 세로 */
+  }
+
+  @media screen and (max-width: 480px) {
+    /** 모바일 세로 */
+  }
 `;
 
 const RightBox = styled.div`
@@ -1003,13 +1213,14 @@ const AreaContainer = styled.div<{ primarycolor?: string }>`
 
 const AreaTitle = styled.p`
   margin: 0;
+  margin: 0.5rem 0;
   /* background-color: red; */
   font-size: 1rem;
   font-weight: 600;
 `;
 
 const AreaSubTitle = styled.p`
-  margin: 0;
+  margin-bottom: 0.5rem;
   /* background-color: red; */
   font-size: 0.8rem;
   font-weight: 400;
@@ -1021,24 +1232,31 @@ const AreaContent = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  /* padding: 0.5rem; */
   gap: 1rem;
 
   &.row {
     flex-direction: row;
+    gap: 0.5rem;
   }
 `;
 
 const ToggleList = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
 
   > label {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 1rem;
   }
-  gap: 0.5rem;
+
+  span {
+    white-space: nowrap;
+  }
 `;
 
 const ManualStartForm = styled.form`
@@ -1149,7 +1367,7 @@ const DDayWrapper = styled.div<{
 
 const StyledDatePicker = styled(DatePicker)`
   text-align: center;
-  width: 5rem;
+  width: 100%;
 
   padding: 6px 8px;
   background: #f8fcff;
@@ -1166,8 +1384,7 @@ const StyledDatePicker = styled(DatePicker)`
 `;
 
 const StyledInput = styled(Input)`
-  width: 2rem;
-  text-align: center;
+  width: 100%;
 `;
 
 // const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
@@ -1216,4 +1433,30 @@ const TimeText = styled.p`
 const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const MobilePreviewBtn = styled.div`
+  cursor: pointer;
+  display: none;
+  background-color: #fff;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  -webkit-box-shadow: 0px 10px 13px -7px #000000,
+    5px 5px 15px 5px rgba(0, 0, 0, 0);
+  box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+
+  @media screen and (max-width: 768px) {
+    /** 모바일 가로, 타블렛 세로 */
+    display: flex;
+  }
+
+  @media screen and (max-width: 480px) {
+    /** 모바일 세로 */
+  }
 `;
