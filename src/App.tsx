@@ -1085,23 +1085,23 @@ const DisplaySection = styled.section<{
 
   border-radius: 20px;
   box-shadow: 0 6px 20px -15px #000;
-  border-width: 1px 1px 0 0;
+  /*border-width: 1px 1px 0 0;
   border-color: #fff;
-  border-style: solid;
-  background-color: rgba(252, 249, 249, 0.8);
+  border-style: solid;*/
+  background-color: #fff;
 
-  &::before {
+  /* &::before {
     width: 560px;
     height: 300px;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0.25); /* 밝게 보이도록 배경색 추가 */
-    border-radius: 20px; /* 둥근 테두리 */
-    box-shadow: 0 6px 20px -15px #000; /* 그림자 효과 */
-    border-width: 1px 1px 0 0; /* 입체감 흰색 테두리 */
+    background-color: rgba(255, 255, 255, 0.25); 
+    border-radius: 20px; 
+    box-shadow: 0 6px 20px -15px #000;
+    border-width: 1px 1px 0 0;
     border-color: #fff;
     border-style: solid;
-  }
+  } */
 
   @media screen and (max-width: 768px) {
     /** 모바일 가로, 타블렛 세로 */
@@ -1149,10 +1149,10 @@ const ControllerSection = styled.section`
     height: 300px;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0.25); /* 밝게 보이도록 배경색 추가 */
-    border-radius: 30px; /* 둥근 테두리 */
-    box-shadow: 0 6px 20px -15px #000; /* 그림자 효과 */
-    border-width: 1px 1px 0 0; /* 입체감 흰색 테두리 */
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 30px;
+    box-shadow: 0 6px 20px -15px #000;
+    border-width: 1px 1px 0 0;
     border-color: #fff;
     border-style: solid;
   }
