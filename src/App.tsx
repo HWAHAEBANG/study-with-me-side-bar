@@ -1068,7 +1068,8 @@ const DisplaySection = styled.section<{
 }>`
   background-color: ${(props) => props.primarycolor};
   width: ${(props) => props.width}px;
-  height: calc(100% - 20px);
+  /* height: calc(100% - 20px); */
+  height: calc(600px);
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -1086,7 +1087,7 @@ const DisplaySection = styled.section<{
   border-width: 1px 1px 0 0;
   border-color: #fff;
   border-style: solid;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.9);
 
   &::before {
     width: 560px;
