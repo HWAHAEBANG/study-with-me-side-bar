@@ -1067,7 +1067,7 @@ const DisplaySection = styled.section<{
   primarycolor: string;
   mobilePreviewBtnVisible: boolean;
 }>`
-  background-color: ${(props) => props.primarycolor};
+  /* background-color: ${(props) => props.primarycolor}; */
   width: ${(props) => props.width}px;
   /* height: calc(100% - 20px); */
   height: 580px;
@@ -1087,7 +1087,7 @@ const DisplaySection = styled.section<{
   /*border-width: 1px 1px 0 0;
   border-color: #fff;
   border-style: solid;*/
-  background-color: #fff;
+  /* background-color: #fff; */
 
   /* &::before {
     width: 560px;
