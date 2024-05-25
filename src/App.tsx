@@ -433,7 +433,7 @@ function App() {
       setDDayList(dDayTableRes);
 
       const getSettingRes = await getFirebaseSettingData(timeZone);
-      console.log(timeZone, getSettingRes);
+      // console.log(timeZone, getSettingRes);
 
       setDisplaySetting(getSettingRes);
 
@@ -607,7 +607,7 @@ function App() {
             <DDday readOnlyDDay={readOnlyDDay} />
           </DDayWrapper>
         </DisplaySection>
-        <ControllerSection>
+        <ControllerSection id="target1">
           <LeftBox>
             {/* <AreaContainer className="outline">
               <AreaTitle>잔여 쉬는 시간 표시</AreaTitle>
@@ -625,7 +625,7 @@ function App() {
                 </ToggleList>
               </AreaContent>
             </AreaContainer> */}
-            <AreaContainer className="outline">
+            <AreaContainer className="outline" id="target2">
               <AreaTitle>수업 시간 타이머</AreaTitle>
               <AreaContent>
                 <Timer

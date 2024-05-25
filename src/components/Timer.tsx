@@ -64,7 +64,7 @@ function Timer({
     )
       return;
     // console.log("어케통과하");
-    console.log("currentIndex", currentIndex);
+    // console.log("currentIndex", currentIndex);
 
     if (!currentIndex) return;
     if (currentIndex % 2 === 0) {
