@@ -27,7 +27,7 @@ function Timer({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeArr2, setTimeArr2] = useState([]);
   const [schoolbell] = useSound("/sound/schoolbell.mp3", {
-    volume: 5,
+    volume: 1,
   });
 
   useEffect(() => {
