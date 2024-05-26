@@ -43,8 +43,10 @@ const TimeTableSetting = ({
     "18",
     "19",
     "20",
-    "L",
-    "D",
+    "21",
+    "22",
+    "23",
+    "24",
   ];
 
   const TIME_TABLE_COLUMN_LIST = [
