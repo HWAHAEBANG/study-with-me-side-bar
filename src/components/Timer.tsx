@@ -308,7 +308,7 @@ const Wrapper = styled.div`
 `;
 
 const Text = styled.span`
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 900;
   color: #111111;
 `;

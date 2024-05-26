@@ -67,10 +67,10 @@ const TimeTableWrapper = styled.div<{
 
 const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
   font-size: 0.8rem;
-  padding: 0 0.5rem;
+  padding: 0.1rem 0.4rem 0.1rem 0.5rem;
   border-radius: 1rem;
   font-weight: 700;
-  line-height: 12px;
+  line-height: 10px;
   ${(props) =>
     props.now &&
     css`
