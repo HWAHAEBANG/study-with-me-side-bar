@@ -60,6 +60,7 @@ const DayTimer = () => {
         readOnlyTimeTable={readOnlyTimeTable}
         timerVisible={timerSettingData.timerVisible}
         activeBell={timerSettingData.bellActive}
+        breackText={timerSettingData.breakText}
       />
       <ToggleList>
         <label>
