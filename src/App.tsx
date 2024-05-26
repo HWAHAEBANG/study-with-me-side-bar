@@ -59,7 +59,7 @@ function App() {
 
   const [timetableList, setTimetableList] = useState<any>([]);
   const [dDayList, setDDayList] = useState<any>([]);
-  const [displaySetting, setDisplaySetting] = useState<any>([]);
+  const [displaySetting, setDisplaySetting] = useState<any>(initialSizeState);
   const [statusData, setStatusData] = useState("");
   const [timeZone, setTimeZone] = useState<boolean>(true);
 
