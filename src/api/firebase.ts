@@ -15,8 +15,8 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // 시간표 데이터 조회
-export const getFirebaseTimeTableDataList = (timeZone: boolean) => {
-  return get(ref(database, `timeTable/${timeZone ? "dayTime" : "nightTime"}`))
+export const getFirebaseTimeTableDataList = (timeZone: string) => {
+  return get(ref(database, `timeTable/${timeZone}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
         return snapshot.val();
@@ -31,11 +31,8 @@ export const getFirebaseTimeTableDataList = (timeZone: boolean) => {
 };
 
 // 시간표 데이터 저장
-export const saveFirebaseTimeTableDataList = (
-  timeZone: boolean,
-  array: any
-) => {
-  set(ref(database, `timeTable/${timeZone ? "dayTime" : "nightTime"}`), array);
+export const saveFirebaseTimeTableDataList = (timeZone: string, array: any) => {
+  set(ref(database, `timeTable/${timeZone}`), array);
 };
 
 // 디데이 데이터 조회
@@ -60,8 +57,8 @@ export const saveFirebaseDDayDataList = (array: any) => {
 };
 
 // 세팅 데이터 조회
-export const getFirebaseSettingData = (timeZone: boolean) => {
-  return get(ref(database, `setting/${timeZone ? "dayTime" : "nightTime"}`))
+export const getFirebaseSettingData = (timeZone: string) => {
+  return get(ref(database, `setting/${timeZone}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
         return snapshot.val();
@@ -76,13 +73,13 @@ export const getFirebaseSettingData = (timeZone: boolean) => {
 };
 
 // 세팅 데이터 저장
-export const saveFirebaseSettingData = (timeZone: boolean, array: any) => {
-  set(ref(database, `setting/${timeZone ? "dayTime" : "nightTime"}`), array);
+export const saveFirebaseSettingData = (timeZone: string, array: any) => {
+  set(ref(database, `setting/${timeZone}`), array);
 };
 
 // 타이머 데이터 조회
-export const getFirebaseTimerSettingData = () => {
-  return get(ref(database, `timerSetting`))
+export const getFirebaseTimerSettingData = (timeZone: string) => {
+  return get(ref(database, `timerSetting/${timeZone}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
         return snapshot.val();
@@ -97,37 +94,37 @@ export const getFirebaseTimerSettingData = () => {
 };
 
 // 타이머 데이터 저장
-export const saveFirebaseTimerSettingData = (array: any) => {
-  set(ref(database, `timerSetting`), array);
+export const saveFirebaseTimerSettingData = (timeZone: string, array: any) => {
+  set(ref(database, `timerSetting/${timeZone}`), array);
 };
 
 //========================================
 
 // 타이머 데이터 조회
-export const getFirebaseTempTimerSettingData = () => {
-  return get(ref(database, `timerTempSetting`))
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        return snapshot.val();
-      } else {
-        console.log("No data available");
-        return "";
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
+// export const getFirebaseTempTimerSettingData = () => {
+//   return get(ref(database, `timerTempSetting`))
+//     .then((snapshot) => {
+//       if (snapshot.exists()) {
+//         return snapshot.val();
+//       } else {
+//         console.log("No data available");
+//         return "";
+//       }
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//     });
+// };
 
-// 타이머 데이터 저장
-export const saveFirebaseTempTimerSettingData = (data: any) => {
-  set(ref(database, `timerTempSetting`), data);
-};
+// // 타이머 데이터 저장
+// export const saveFirebaseTempTimerSettingData = (data: any) => {
+//   set(ref(database, `timerTempSetting`), data);
+// };
 //========================================
 
 // 상태 데이터 조회
-export const getFirebaseStatusData = () => {
-  return get(ref(database, "status"))
+export const getFirebaseStatusData = (timeZone: string) => {
+  return get(ref(database, `status/${timeZone}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
         return snapshot.val();
@@ -142,6 +139,6 @@ export const getFirebaseStatusData = () => {
 };
 
 // 상태 데이터 저장
-export const saveFirebaseStatusData = (data: string) => {
-  set(ref(database, `status`), data);
+export const saveFirebaseStatusData = (timeZone: string, data: string) => {
+  set(ref(database, `status/${timeZone}`), data);
 };

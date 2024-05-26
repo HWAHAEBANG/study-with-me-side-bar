@@ -66,16 +66,14 @@ const Desc = styled.div<{ state: boolean }>`
 
 interface ToggleProps {
   state: boolean;
-  setState:
-    | Dispatch<SetStateAction<boolean>>
-    | ((state: boolean) => Promise<boolean>)
-    | ((state: boolean) => void);
+  setState: Dispatch<SetStateAction<any>>;
+  accessor: string;
 }
 
-const Toggle = ({ state, setState }: ToggleProps) => {
+const Toggle = ({ state, setState, accessor }: ToggleProps) => {
   const toggleHandler = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
-    setState(!state);
+    setState((prev: any) => ({ ...prev, [accessor]: !state }));
     // isOn의 상태를 변경하는 메소드를 구현
   };
 

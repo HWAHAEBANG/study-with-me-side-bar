@@ -30,6 +30,8 @@ function Timer({
     volume: 1,
   });
 
+  console.log("테스트테스트", readOnlyTimeTable);
+
   useEffect(() => {
     // console.log("처음만");
     setCurrentIndex(0);
