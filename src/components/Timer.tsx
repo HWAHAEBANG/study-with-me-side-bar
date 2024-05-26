@@ -287,8 +287,8 @@ function Timer({
 export default Timer;
 
 const Container = styled.div`
-  width: 15rem;
-  height: 15rem;
+  width: 30rem;
+  height: 30rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -309,14 +309,14 @@ const Wrapper = styled.div`
 `;
 
 const Text = styled.span`
-  font-size: 1.4rem;
+  font-size: 3rem;
   font-family: "TheJamsil5Bold";
   font-weight: 800;
   color: #111111;
 `;
 
 const Count = styled.span`
-  font-size: 2rem;
+  font-size: 4.5rem;
   font-weight: 900;
   color: #111111;
 `;
