@@ -178,7 +178,10 @@ function Timer({
   //=====================================
 
   function getRemainingTime(current: Date, target: Date) {
-    const difference = target.getTime() - current.getTime() + 1000; // 1000은 1초 차이나는 거에 대한 보상.
+    let targetTimeStemp = target.getTime();
+    let currentTimeStemp = current.getTime();
+    if (targetTimeStemp < currentTimeStemp) targetTimeStemp += 86400000; // 자정이 지나서 00으로 바뀌는 경우 24시간을 더해줌.
+    const difference = targetTimeStemp - currentTimeStemp + 1000; // 1000은 1초 차이나는 거에 대한 보상.
     const totalSeconds = Math.max(Math.floor(difference / 1000), 0);
     const hours = Math.floor(totalSeconds / 3600)
       .toString()
