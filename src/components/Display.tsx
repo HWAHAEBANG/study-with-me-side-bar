@@ -110,7 +110,7 @@ const DisplaySection = styled.section<{
 }>`
   width: ${(props) => props.width}px;
   /* height: calc(100% - 20px); */
-  height: 580px;
+  height: 1700px;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -251,7 +251,7 @@ const DDayWrapper = styled.div<{
 const DisplayTitle = styled.p`
   margin: 0;
   font-weight: 900;
-  font-size: 0.8rem;
+  font-size: 1.7rem;
   font-family: "TheJamsil5Bold";
 `;
 
@@ -272,7 +272,7 @@ const StatusText = styled.p`
 
 const TimeText = styled.p`
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 3rem;
   font-family: "TheJamsil5Bold";
   font-weight: 800;
 `;

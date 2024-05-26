@@ -62,7 +62,7 @@ export default DDday;
 const StyledWrapper = styled.section`
   overflow: hidden;
   width: 100%;
-  height: 4rem;
+  height: 7rem;
 `;
 
 const StyledSlider = styled(Slider)`
@@ -89,20 +89,20 @@ const Text = styled.div`
   font-weight: 800;
 
   &.name {
-    font-size: 1.2rem;
+    font-size: 3rem;
     /* font-weight: 700; */
     color: #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   }
 
   &.dDay {
-    font-size: 1.2rem;
+    font-size: 2rem;
     /* font-weight: 700; */
     color: #ee4f36;
   }
 
   &.date {
-    font-size: 0.7rem;
+    font-size: 1.2rem;
     /* font-weight: 700; */
   }
 `;

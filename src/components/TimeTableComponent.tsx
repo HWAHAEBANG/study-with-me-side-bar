@@ -66,10 +66,10 @@ const TimeTableWrapper = styled.div<{
 const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
   font-family: "TheJamsil5Bold";
   font-weight: 800;
-  font-size: 0.8rem;
-  padding: 0.1rem 0.4rem 0.1rem 0.5rem;
+  font-size: 1.5rem;
+  padding: 0.3rem 0.4rem 0.3rem 0.5rem;
   border-radius: 1rem;
-  line-height: 10px;
+  line-height: 25px;
   ${(props) =>
     props.now &&
     css`

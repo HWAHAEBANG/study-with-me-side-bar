@@ -72,8 +72,8 @@ const DisplaySetting = ({
         />
         <input
           type="range"
-          min={0}
-          max={500}
+          min={100}
+          max={600}
           value={displaySetting?.dateAndStatus?.height}
           id="dateAndStatus"
           name="height"
@@ -108,8 +108,8 @@ const DisplaySetting = ({
         />
         <input
           type="range"
-          min={0}
-          max={500}
+          min={500}
+          max={1000}
           value={displaySetting?.timeTable?.height}
           id="timeTable"
           name="height"
