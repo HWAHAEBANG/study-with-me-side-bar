@@ -252,12 +252,14 @@ const DisplayTitle = styled.p`
   margin: 0;
   font-weight: 900;
   font-size: 0.8rem;
+  font-family: "TheJamsil5Bold";
 `;
 
 const DateText = styled.p`
   margin: 0;
   font-size: 1rem;
   font-weight: 900;
+  font-family: "TheJamsil5Bold";
 `;
 
 const StatusText = styled.p`
@@ -265,10 +267,12 @@ const StatusText = styled.p`
   font-size: 1.1rem;
   font-weight: 900;
   color: #ee4f36;
+  font-family: "TheJamsil5Bold";
 `;
 
 const TimeText = styled.p`
   margin: 0;
   font-size: 1.5rem;
-  font-weight: 900;
+  font-family: "TheJamsil5Bold";
+  font-weight: 800;
 `;

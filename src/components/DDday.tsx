@@ -85,22 +85,24 @@ const Container = styled.div`
 const Text = styled.div`
   margin: 0;
   text-align: center;
+  font-family: "TheJamsil5Bold";
+  font-weight: 800;
 
   &.name {
     font-size: 1.2rem;
-    font-weight: 700;
+    /* font-weight: 700; */
     color: #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   }
 
   &.dDay {
     font-size: 1.2rem;
-    font-weight: 700;
+    /* font-weight: 700; */
     color: #ee4f36;
   }
 
   &.date {
     font-size: 0.7rem;
-    font-weight: 700;
+    /* font-weight: 700; */
   }
 `;

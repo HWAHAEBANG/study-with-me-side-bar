@@ -311,7 +311,8 @@ const Wrapper = styled.div`
 
 const Text = styled.span`
   font-size: 1.4rem;
-  font-weight: 900;
+  font-family: "TheJamsil5Bold";
+  font-weight: 800;
   color: #111111;
 `;
 
