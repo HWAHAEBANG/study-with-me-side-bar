@@ -296,6 +296,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+  margin: 5rem;
 `;
 
 const Wrapper = styled.div`
