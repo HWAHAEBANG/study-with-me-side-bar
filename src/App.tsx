@@ -595,9 +595,7 @@ function App() {
             width={displaySetting?.video?.width}
             height={displaySetting?.video?.height}
             areavisible={areavisible}
-          >
-            비디오 영역
-          </VideoWrapper>
+          ></VideoWrapper>
           <DDayWrapper
             width={displaySetting?.dDay?.width}
             height={displaySetting?.dDay?.height}

@@ -20,7 +20,7 @@ function Timer({
   breackText,
 }: any) {
   const [remainingTime, setRemainingTime] = useState(" ");
-  const [text, setText] = useState("Good Morning");
+  const [text, setText] = useState(" ");
   const [targetTime, setTargetTime] = useState<Date | null>(null);
   const [percent, setPercent] = useState(100);
   const [presentSession, setPresentSession] = useState(readOnlyTimeTable[0]);
@@ -34,7 +34,7 @@ function Timer({
     // console.log("처음만");
     setCurrentIndex(0);
     setPercent(100);
-    setText("Good Morning");
+    setText(" ");
     setTargetTime(null);
     setRemainingTime(" ");
     setTimeArr2([]);
@@ -308,7 +308,7 @@ const Wrapper = styled.div`
 `;
 
 const Text = styled.span`
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 900;
   color: #111111;
 `;
