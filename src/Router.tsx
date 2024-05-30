@@ -9,6 +9,8 @@ import DayTimer from "./pages/DayTimer";
 import NightTimer from "./pages/NightTimer";
 import Header from "./components/common/Header";
 import styled from "styled-components";
+import TestTime from "./pages/TestTime";
+import TestTimer from "./pages/TestTimer";
 
 const Router = () => {
   return (
@@ -20,10 +22,12 @@ const Router = () => {
             <Route path="/" element={<Navigate to="/daytime" />} />
             <Route path="/daytime" element={<DayTime />} />
             <Route path="/nighttime" element={<NightTime />} />
-            <Route path="/timer" element={<Timer />} />
             <Route path="/daytimer" element={<DayTimer />} />
             <Route path="/nighttimer" element={<NightTimer />} />
             <Route path="/setting" element={<CommonSetting />} />
+            <Route path="/daytime" element={<DayTime />} />
+            <Route path="/testtime" element={<TestTime />} />
+            <Route path="/testtimer" element={<TestTimer />} />
           </Routes>
         </Inner>
       </Main>

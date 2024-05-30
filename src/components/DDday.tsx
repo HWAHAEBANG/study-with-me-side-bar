@@ -12,7 +12,7 @@ const DDday = ({ readOnlyDDay }: any) => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 2000,
+    autoplaySpeed: 3000,
     arrows: false,
   };
 
@@ -62,28 +62,30 @@ export default DDday;
 const StyledWrapper = styled.section`
   overflow: hidden;
   width: 100%;
-  height: 7rem;
+  height: 10rem;
 `;
 
 const StyledSlider = styled(Slider)`
+  .slick-slide {
+    height: 500px;
+  }
   .slick-list {
     overflow: visible;
   }
 `;
 
 const Container = styled.div`
-  /* background-color: yellow; */
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 20px;
   width: 100%;
-  height: 100%;
+  height: 600px;
 `;
 
 const Text = styled.div`
-  margin: 0;
+  margin: 0.5rem;
   text-align: center;
   font-family: "TheJamsil5Bold";
   font-weight: 800;
@@ -104,5 +106,7 @@ const Text = styled.div`
   &.date {
     font-size: 1.2rem;
     /* font-weight: 700; */
+    color: #ffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   }
 `;
