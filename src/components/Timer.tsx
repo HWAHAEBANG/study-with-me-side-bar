@@ -31,40 +31,34 @@ function Timer({
   });
 
   useEffect(() => {
-    // console.log("처음만");
-    setCurrentIndex(0);
-    setPercent(100);
-    setText(" ");
-    setTargetTime(null);
-    setRemainingTime(" ");
-    setTimeArr2([]);
-    timerStart("start");
+    console.log("검문소1");
+
+    // setCurrentIndex(0);
+    // setPercent(100);
+    // setText(" ");
+    // setTargetTime(null);
+    // setRemainingTime(" ");
+    // setTimeArr2([]);
+    timerStart();
   }, [readOnlyTimeTable]);
 
   useEffect(() => {
+    console.log("검문소2");
+
     updateChartPercent();
-    // console.log("타임", remainingTime);
     if (remainingTime === "00:00:00") {
-      // console.log("타임아웃");
       if (activeBell) schoolbell();
-      timerStart("restart");
+      timerStart();
     }
   }, [remainingTime, currentIndex]);
 
   const updateChartPercent = () => {
-    //  타임 테이블 다 끝났을 때, 없는 인덱스 참조해서 튕김현상 방지
-    // if (!currentIndex || !timeArr2 || !timeArr2[currentIndex]) return;
-    // console.log("음", currentIndex, timeArr2.length);
-
     if (
-      // currentIndex === 0 ||
       !currentIndex ||
       timeArr2.length === 0 ||
       currentIndex === timeArr2.length
     )
       return;
-    // console.log("어케통과하");
-    // console.log("currentIndex", currentIndex);
 
     if (!currentIndex) return;
     if (currentIndex % 2 === 0) {
@@ -81,28 +75,6 @@ function Timer({
 
     setPresentSession(readOnlyTimeTable[Math.floor(currentIndex / 2)]);
 
-    // const nowSession =
-
-    // console.log("디버그", presentSession?.startTime, presentSession?.endTime);
-    // console.log(
-    //   "디버그2",
-    //   timeToSeconds(remainingTime),
-    //   calcSecondsDiff(
-    //     presentSession?.startTime + ":00",
-    //     presentSession?.endTime + ":00"
-    //   )
-    // );
-
-    // console.log(
-    //   "오잉",
-    //   (timeToSeconds(remainingTime) /
-    //     calcSecondsDiff(
-    //       presentSession?.startTime + ":00",
-    //       presentSession?.endTime + ":00"
-    //     )) *
-    //     100
-    // );
-
     setPercent(
       (timeToSeconds(remainingTime) /
         calcSecondsDiff(
@@ -114,12 +86,11 @@ function Timer({
     //==========================
 
     const nextTarget = timeArr2[currentIndex];
-    // console.log("넥스트타겟", timeArr2);
 
     //@ts-ignore
     const targetHour = nextTarget.split(":")[0];
     //@ts-ignore
-    const targetMinutes = nextTarget.split(":")[1]; // 여기까지함
+    const targetMinutes = nextTarget.split(":")[1];
 
     const now = new Date();
     const target = new Date(now.getTime());
@@ -128,7 +99,6 @@ function Timer({
   };
 
   const timerStart = (type?: string) => {
-    // console.log("타이머 시작");
     if (readOnlyTimeTable.length === 0) return;
 
     let flag = true;
@@ -151,22 +121,18 @@ function Timer({
       const tableTimeNum = Number(item.replace(":", "") + "00");
 
       if (!flag || currentTimeNum >= tableTimeNum) {
-        // if (type === "start") return setCurrentIndex(index - 1);
         return;
       } else {
         flag = false;
-        // if (type === "restart") return (currentIdx = index + 1);
-        // if (type === "start") return (currentIdx = index);
-        if (type === "restart") return setCurrentIndex(index);
-        if (type === "start") return setCurrentIndex(index);
+        return setCurrentIndex(index);
       }
     });
   };
 
   useEffect(() => {
+    console.log("검문소3");
     const intervalId = setInterval(() => {
       const now = new Date();
-      // setCurrentTime(now);
       if (targetTime) {
         setRemainingTime(getRemainingTime(now, targetTime));
       }
@@ -194,22 +160,6 @@ function Timer({
   }
 
   //=====================================
-  // test
-  // const [currentTime, setCurrentTime] = useState(new Date());
-
-  // const updateTime = () => {
-  //   setCurrentTime(new Date());
-  // };
-
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     updateTime();
-  //   }, 1000);
-
-  //   return () => clearInterval(intervalId);
-  // }, []);
-
-  //================
   const options = {
     cutoutPercentage: 10, // 도넛 굵기 값이 클수록 얇아짐. Chart.js 3+에서는 'cutout'을 사용.
     maintainAspectRatio: false, // false : 상위 div에 구속
