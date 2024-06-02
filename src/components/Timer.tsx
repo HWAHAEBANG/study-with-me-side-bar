@@ -24,15 +24,13 @@ function Timer({
   const [targetTime, setTargetTime] = useState<Date | null>(null);
   const [percent, setPercent] = useState(100);
   const [presentSession, setPresentSession] = useState(readOnlyTimeTable[0]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(-1);
   const [timeArr2, setTimeArr2] = useState([]);
   const [schoolbell] = useSound("/sound/schoolbell.mp3", {
     volume: 1,
   });
 
   useEffect(() => {
-    console.log("검문소1");
-
     // setCurrentIndex(0);
     // setPercent(100);
     // setText(" ");
@@ -43,8 +41,6 @@ function Timer({
   }, [readOnlyTimeTable]);
 
   useEffect(() => {
-    console.log("검문소2");
-
     updateChartPercent();
     if (remainingTime === "00:00:00") {
       if (activeBell) schoolbell();
@@ -53,15 +49,19 @@ function Timer({
   }, [remainingTime, currentIndex]);
 
   const updateChartPercent = () => {
+    // console.log("커런", currentIndex);
     if (
-      !currentIndex ||
+      // !currentIndex ||
       timeArr2.length === 0 ||
       currentIndex === timeArr2.length
     )
       return;
 
-    if (!currentIndex) return;
+    // if (!currentIndex) return;
+
     if (currentIndex % 2 === 0) {
+      // console.log("열로 들어오긴 할텐데");
+
       setText(breackText);
     }
     if (currentIndex % 2 === 1) {
@@ -99,6 +99,8 @@ function Timer({
   };
 
   const timerStart = (type?: string) => {
+    // console.log("스타트");
+
     if (readOnlyTimeTable.length === 0) return;
 
     let flag = true;
@@ -120,17 +122,23 @@ function Timer({
 
       const tableTimeNum = Number(item.replace(":", "") + "00");
 
-      if (!flag || currentTimeNum >= tableTimeNum) {
-        return;
-      } else {
+      // console.log("통과는 하는지");
+
+      if (flag && currentTimeNum < tableTimeNum) {
+        // console.log("예스", flag, currentTimeNum, tableTimeNum);
+
         flag = false;
         return setCurrentIndex(index);
+      } else {
+        // console.log("노우", flag, currentTimeNum, tableTimeNum);
+        return;
       }
     });
   };
 
+  // console.log("커런 인덱", currentIndex);
+
   useEffect(() => {
-    console.log("검문소3");
     const intervalId = setInterval(() => {
       const now = new Date();
       if (targetTime) {
@@ -143,10 +151,33 @@ function Timer({
 
   //=====================================
 
+  function isMidnight(targetTimeStamp: number, currentTimeStamp: number) {
+    console.log("함수 진입");
+    const target = new Date(targetTimeStamp);
+    const current = new Date(currentTimeStamp);
+    return current.getHours() === 23 && target.getHours() === 0;
+  }
+
+  //====================================
+
   function getRemainingTime(current: Date, target: Date) {
     let targetTimeStemp = target.getTime();
     let currentTimeStemp = current.getTime();
+
+    console.log(
+      targetTimeStemp > currentTimeStemp,
+      targetTimeStemp,
+      currentTimeStemp,
+      targetTimeStemp - currentTimeStemp
+    );
+
     // if (targetTimeStemp < currentTimeStemp) targetTimeStemp += 86400000; // 자정이 지나서 00으로 바뀌는 경우 24시간을 더해줌.
+    if (targetTimeStemp < currentTimeStemp) {
+      if (isMidnight(targetTimeStemp, currentTimeStemp)) {
+        targetTimeStemp += 86400000;
+        console.log("타겟타임 보상");
+      }
+    }
     const difference = targetTimeStemp - currentTimeStemp + 1000; // 1000은 1초 차이나는 거에 대한 보상.
     const totalSeconds = Math.max(Math.floor(difference / 1000), 0);
     const hours = Math.floor(totalSeconds / 3600)
