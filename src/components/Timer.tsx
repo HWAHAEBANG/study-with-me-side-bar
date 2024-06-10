@@ -34,6 +34,8 @@ function Timer({
     timerStart();
   }, [readOnlyTimeTable]);
 
+  // console.log("리드온리", readOnlyTimeTable);
+
   useEffect(() => {
     updateChartPercent();
     if (remainingTime === "00:00:00") {
@@ -70,10 +72,8 @@ function Timer({
     );
     //==========================
     // console.log("커런인덱스", currentIndex);
-    // console.log("커런인덱스", currentIndex);
 
     const nextTarget = timeArr2[currentIndex];
-    // console.log("넥스트 타겟", nextTarget);
     // console.log("넥스트 타겟", nextTarget);
 
     //@ts-ignore
@@ -115,14 +115,20 @@ function Timer({
       //   Math.floor(currentTimeNum / 10000),
       //   Math.floor(tableTimeNum / 10000)
       // );
-      // if (
-      //   flag &&
-      //   Math.floor(currentTimeNum / 10000) === 23 &&
-      //   Math.floor(tableTimeNum / 10000) === 0
-      // ) {
-      //   flag = false;
-      //   return setCurrentIndex(index);
-      // }
+      if (
+        index !== 0 &&
+        index !== 1 &&
+        flag &&
+        Math.floor(currentTimeNum / 10000) === 23 &&
+        Math.floor(tableTimeNum / 10000) === 0
+      ) {
+        // console.log("들어왔어");
+
+        flag = false;
+        // console.log("인덱스는", index);
+
+        return setCurrentIndex(index);
+      }
 
       if (flag && currentTimeNum < tableTimeNum) {
         flag = false;
@@ -135,8 +141,6 @@ function Timer({
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      // console.log("타겟이 문제인가", targetTime);
-
       // console.log("타겟이 문제인가", targetTime);
 
       const now = new Date();
@@ -152,13 +156,8 @@ function Timer({
 
   function isMidnight(targetTimeStamp: number, currentTimeStamp: number) {
     // console.log("함수 진입", targetTimeStamp, currentTimeStamp);
-    // console.log("함수 진입", targetTimeStamp, currentTimeStamp);
     const target = new Date(targetTimeStamp);
     const current = new Date(currentTimeStamp);
-    // console.log("흠", current.getHours(), target.getHours());
-
-    // console.log("흐미", current.getHours() === 23 && target.getHours() === 0);
-
     // console.log("흠", current.getHours(), target.getHours());
 
     // console.log("흐미", current.getHours() === 23 && target.getHours() === 0);
@@ -178,19 +177,11 @@ function Timer({
     //   currentTimeStemp,
     //   targetTimeStemp - currentTimeStemp
     // );
-    // console.log(
-    //   targetTimeStemp > currentTimeStemp,
-    //   targetTimeStemp,
-    //   currentTimeStemp,
-    //   targetTimeStemp - currentTimeStemp
-    // );
 
     if (targetTimeStemp < currentTimeStemp) {
       // 자정이 지나서 00으로 바뀌는 경우 24시간을 더해줌.
-      // 자정이 지나서 00으로 바뀌는 경우 24시간을 더해줌.
       if (isMidnight(targetTimeStemp, currentTimeStemp)) {
         targetTimeStemp += 86400000;
-        // console.log("타겟타임 보상");
         // console.log("타겟타임 보상");
       }
     }
