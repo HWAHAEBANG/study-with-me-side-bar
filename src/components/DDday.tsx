@@ -27,9 +27,17 @@ const DDday = ({ readOnlyDDay }: any) => {
     const targetDate = toKST(new Date(targetDateStr));
     const today = toKST(new Date());
 
+    // console.log("타겟데이트", targetDate);
+    // console.log("투데이", today);
+
     // 목표 날짜와 현재 날짜 사이의 일수 차이 계산
-    const differenceInTime = targetDate.getTime() - today.getTime();
+    // const differenceInTime = targetDate.getTime() - today.getTime();
+    const differenceInTime =
+      targetDate.setHours(0, 0, 0, 0) - today.setHours(0, 0, 0, 0);
     const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+
+    // console.log("디타", differenceInTime);
+    // console.log("디데", differenceInDays);
 
     // D-day 포맷으로 변환
     const ddayFormat =
