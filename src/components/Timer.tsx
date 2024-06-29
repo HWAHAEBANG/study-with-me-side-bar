@@ -252,7 +252,7 @@ function Timer({
         hoverOffset: 4,
         // cutout: `${100 - gaugeWidth}%`, // 도넛 안쪽 원의 크기 설정
         cutout: `90%`, // 도넛 안쪽 원의 크기 설정
-        borderRadius: [20, 0],
+        borderRadius: [currentIndex % 2 ? 20 : 0, 0],
         borderWidth: [0],
         spacing: 0,
       },
