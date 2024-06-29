@@ -60,6 +60,7 @@ const AllDayTimer = () => {
         readOnlyTimeTable={readOnlyTimeTable}
         timerVisible={timerSettingData.timerVisible}
         activeBell={timerSettingData.bellActive}
+        sessionText={timerSettingData.sessionText}
         breackText={timerSettingData.breakText}
       />
       <ToggleList>
@@ -77,6 +78,14 @@ const AllDayTimer = () => {
             accessor="bellActive"
             state={timerSettingData.bellActive}
             setState={setTimerSettingData}
+          />
+        </label>
+        <label>
+          <span> 공부 시간 문구 : </span>
+          <StyledInput
+            value={timerSettingData.sessionText}
+            name="sessionText"
+            onChange={handleChange}
           />
         </label>
         <label>

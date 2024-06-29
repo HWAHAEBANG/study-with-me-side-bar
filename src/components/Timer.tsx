@@ -18,6 +18,7 @@ function Timer({
   // gaugeColor,
   // gaugeWidth,
   breackText,
+  sessionText,
 }: any) {
   const [remainingTime, setRemainingTime] = useState(" ");
   const [text, setText] = useState(" ");
@@ -53,10 +54,16 @@ function Timer({
     }
     if (currentIndex % 2 === 1) {
       setText(
-        Number(readOnlyTimeTable[Math.floor(currentIndex / 2)].session) +
-          " 교시"
+        sessionText
+          ?.split("{number}")
+          .join(Number(readOnlyTimeTable[Math.floor(currentIndex / 2)].session))
+
+        // Number(readOnlyTimeTable[Math.floor(currentIndex / 2)].session) +
+        //   " 교시"
       );
     }
+
+    // console.log("sessionText", sessionText?.spilt("{number}"));
 
     //=========================
 

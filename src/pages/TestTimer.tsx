@@ -61,6 +61,7 @@ const TestTimer = () => {
         timerVisible={timerSettingData.timerVisible}
         activeBell={timerSettingData.bellActive}
         breackText={timerSettingData.breakText}
+        sessionText={timerSettingData.sessionText}
       />
       <ToggleList>
         <label>
@@ -77,6 +78,14 @@ const TestTimer = () => {
             accessor="bellActive"
             state={timerSettingData.bellActive}
             setState={setTimerSettingData}
+          />
+        </label>
+        <label>
+          <span> 공부 시간 문구 : </span>
+          <StyledInput
+            value={timerSettingData.sessionText}
+            name="sessionText"
+            onChange={handleChange}
           />
         </label>
         <label>
