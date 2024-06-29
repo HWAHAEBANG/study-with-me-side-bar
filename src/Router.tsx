@@ -11,6 +11,8 @@ import Header from "./components/common/Header";
 import styled from "styled-components";
 import TestTime from "./pages/TestTime";
 import TestTimer from "./pages/TestTimer";
+import AllDayTime from "./pages/AllDayTime";
+import AllDayTimer from "./pages/AllDayTimer";
 
 const Router = () => {
   return (
@@ -24,8 +26,9 @@ const Router = () => {
             <Route path="/nighttime" element={<NightTime />} />
             <Route path="/daytimer" element={<DayTimer />} />
             <Route path="/nighttimer" element={<NightTimer />} />
+            <Route path="/alldaytime" element={<AllDayTime />} />
+            <Route path="/alldaytimer" element={<AllDayTimer />} />
             <Route path="/setting" element={<CommonSetting />} />
-            <Route path="/daytime" element={<DayTime />} />
             <Route path="/testtime" element={<TestTime />} />
             <Route path="/testtimer" element={<TestTimer />} />
           </Routes>

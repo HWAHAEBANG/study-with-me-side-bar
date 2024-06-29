@@ -47,6 +47,7 @@ const TimeTableSetting = ({
     "22",
     "23",
     "24",
+    "25",
   ];
 
   const TIME_TABLE_COLUMN_LIST = [
