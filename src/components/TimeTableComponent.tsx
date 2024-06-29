@@ -80,6 +80,13 @@ const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
     css`
       color: #ee4f36;
     `}
+    ${(props) =>
+    props.meal &&
+    props.now &&
+    css`
+      color: #ffffff;
+      background-color: #ff9b9b;
+    `}
 `;
 
 // import React, { useEffect, useRef, useState } from "react";
