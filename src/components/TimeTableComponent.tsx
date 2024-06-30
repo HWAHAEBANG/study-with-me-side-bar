@@ -84,7 +84,7 @@ const TimeTableRow = styled.p<{ now: boolean; meal: boolean }>`
     props.meal &&
     props.now &&
     css`
-      color: #ffffff;
+      color: #e92121;
       background-color: #ff9b9b;
     `}
 `;
