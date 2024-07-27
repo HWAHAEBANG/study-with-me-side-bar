@@ -109,7 +109,7 @@ const TimeTableSetting = ({
           onChange={(date) => handleChangeTimePicker(date, index, "startTime")}
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={1}
+          timeIntervals={5}
           timeCaption="Time"
           dateFormat="HH:mm"
           timeFormat="HH:mm"
@@ -123,7 +123,7 @@ const TimeTableSetting = ({
           onChange={(date) => handleChangeTimePicker(date, index, "endTime")}
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={1}
+          timeIntervals={5}
           timeCaption="Time"
           dateFormat="HH:mm"
           timeFormat="HH:mm"

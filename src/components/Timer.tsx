@@ -50,7 +50,23 @@ function Timer({
     if (timeArr2.length === 0 || currentIndex === timeArr2.length) return;
 
     if (currentIndex % 2 === 0) {
-      setText(breackText);
+      setText(() => {
+        // 0교시 쉬는 시간이면 good morning
+        if (
+          Number(readOnlyTimeTable[Math.floor(currentIndex / 2)].session - 1) <=
+          0
+        ) {
+          return "Ready to Study!";
+        } else {
+          return breackText
+            ?.split("{number}")
+            .join(
+              Number(
+                readOnlyTimeTable[Math.floor(currentIndex / 2)].session - 1
+              )
+            );
+        }
+      });
     }
     if (currentIndex % 2 === 1) {
       setText(
@@ -311,6 +327,7 @@ const Text = styled.span`
   font-family: "TheJamsil5Bold";
   font-weight: 800;
   color: #111111;
+  white-space: nowrap;
 `;
 
 const Count = styled.span`
